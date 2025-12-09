@@ -3,6 +3,7 @@ import type {
   AxiosInstance,
   AxiosResponse,
   InternalAxiosRequestConfig,
+  AxiosRequestHeaders,
 } from "axios";
 import { useAuthStore } from "../store/auth.store";
 import { useToastStore } from "../store/toast.store";

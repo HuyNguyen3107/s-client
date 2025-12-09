@@ -863,7 +863,7 @@ export default function OrderEditPage() {
             </Typography>
             <Grid container spacing={3}>
               {/* Ảnh demo sản phẩm */}
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Box>
                   <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
                     Ảnh demo sản phẩm
@@ -948,7 +948,7 @@ export default function OrderEditPage() {
               </Grid>
 
               {/* Ảnh nền */}
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Box>
                   <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
                     Ảnh nền
@@ -1033,7 +1033,7 @@ export default function OrderEditPage() {
               </Grid>
 
               {/* Ảnh sản phẩm đã hoàn thành */}
-              <Grid item xs={12} md={4}>
+              <Grid size={{ xs: 12, md: 4 }}>
                 <Box>
                   <Typography variant="body2" sx={{ mb: 1, fontWeight: 500 }}>
                     Ảnh sản phẩm đã hoàn thành
@@ -1125,7 +1125,7 @@ export default function OrderEditPage() {
               Vận chuyển
             </Typography>
             <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Tooltip
                   title="Nhập phí vận chuyển (VNĐ). Phải là số không âm"
                   enterTouchDelay={0}
@@ -1149,7 +1149,7 @@ export default function OrderEditPage() {
                   />
                 </Tooltip>
               </Grid>
-              <Grid item xs={12} md={6}>
+              <Grid size={{ xs: 12, md: 6 }}>
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <Tooltip
                     title="Mã tracking do Viettel Post cung cấp"

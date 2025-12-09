@@ -503,7 +503,7 @@ export default function OrderTrackingPage() {
                     </AccordionSummary>
                     <AccordionDetails>
                       <Grid container spacing={2}>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -525,7 +525,7 @@ export default function OrderTrackingPage() {
                             {getCustomerName(order)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -547,7 +547,7 @@ export default function OrderTrackingPage() {
                             {getCustomerPhone(order)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -569,7 +569,7 @@ export default function OrderTrackingPage() {
                             {getCustomerEmail(order)}
                           </Typography>
                         </Grid>
-                        <Grid item xs={12} md={6}>
+                        <Grid size={{ xs: 12, md: 6 }}>
                           <Box
                             sx={{
                               display: "flex",
@@ -606,7 +606,7 @@ export default function OrderTrackingPage() {
                               Thông tin người nhận hàng (nếu khác người đặt)
                             </Typography>
                             <Grid container spacing={2}>
-                              <Grid item xs={12} md={6}>
+                              <Grid size={{ xs: 12, md: 6 }}>
                                 <Box
                                   sx={{
                                     display: "flex",
@@ -631,7 +631,7 @@ export default function OrderTrackingPage() {
                                   {getReceiverName(order)}
                                 </Typography>
                               </Grid>
-                              <Grid item xs={12} md={6}>
+                              <Grid size={{ xs: 12, md: 6 }}>
                                 <Box
                                   sx={{
                                     display: "flex",
@@ -681,11 +681,11 @@ export default function OrderTrackingPage() {
                     <AccordionDetails>
                       <Grid container spacing={3}>
                         {/* Product Main Info */}
-                        <Grid item xs={12}>
+                        <Grid size={{ xs: 12 }}>
                           <Paper sx={{ p: 2, bgcolor: "#f8f9fa" }}>
                             <Grid container spacing={2} alignItems="center">
                               {order.information?.product?.imageUrl && (
-                                <Grid item xs={12} sm={3}>
+                                <Grid size={{ xs: 12, sm: 3 }}>
                                   <Box
                                     component="img"
                                     src={order.information.product.imageUrl}
@@ -701,11 +701,12 @@ export default function OrderTrackingPage() {
                                 </Grid>
                               )}
                               <Grid
-                                item
-                                xs={12}
-                                sm={
-                                  order.information?.product?.imageUrl ? 9 : 12
-                                }
+                                size={{
+                                  xs: 12,
+                                  sm: order.information?.product?.imageUrl
+                                    ? 9
+                                    : 12,
+                                }}
                               >
                                 <Typography
                                   variant="h6"
@@ -763,7 +764,7 @@ export default function OrderTrackingPage() {
 
                         {/* Variant Details */}
                         {order.information?.variant?.description && (
-                          <Grid item xs={12}>
+                          <Grid size={{ xs: 12 }}>
                             <Typography
                               variant="subtitle2"
                               color="text.secondary"
@@ -805,7 +806,7 @@ export default function OrderTrackingPage() {
                           <Grid container spacing={2} alignItems="flex-start">
                             {order.information.background
                               .backgroundImageUrl && (
-                              <Grid item xs={12} sm={4} md={3}>
+                              <Grid size={{ xs: 12, sm: 4, md: 3 }}>
                                 <Box
                                   component="img"
                                   src={
@@ -826,18 +827,17 @@ export default function OrderTrackingPage() {
                               </Grid>
                             )}
                             <Grid
-                              item
-                              xs={12}
-                              sm={
-                                order.information.background.backgroundImageUrl
+                              size={{
+                                xs: 12,
+                                sm: order.information.background
+                                  .backgroundImageUrl
                                   ? 8
-                                  : 12
-                              }
-                              md={
-                                order.information.background.backgroundImageUrl
+                                  : 12,
+                                md: order.information.background
+                                  .backgroundImageUrl
                                   ? 9
-                                  : 12
-                              }
+                                  : 12,
+                              }}
                             >
                               <Typography
                                 variant="h6"
@@ -907,7 +907,10 @@ export default function OrderTrackingPage() {
                           <Grid container spacing={2}>
                             {order.information.background.formData.values.map(
                               (field: any) => (
-                                <Grid item xs={12} sm={6} key={field.fieldId}>
+                                <Grid
+                                  size={{ xs: 12, sm: 6 }}
+                                  key={field.fieldId}
+                                >
                                   <Paper
                                     sx={{
                                       p: 2,
@@ -1056,10 +1059,7 @@ export default function OrderTrackingPage() {
                               <Grid container spacing={2}>
                                 {category.products.map((product: any) => (
                                   <Grid
-                                    item
-                                    xs={12}
-                                    sm={6}
-                                    md={4}
+                                    size={{ xs: 12, sm: 6, md: 4 }}
                                     key={product.productCustomId}
                                   >
                                     <Paper sx={{ p: 2, height: "100%" }}>
@@ -1141,7 +1141,7 @@ export default function OrderTrackingPage() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <Grid container spacing={2}>
-                          <Grid item xs={12} sm={6}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography variant="body2" color="text.secondary">
                               Loại vận chuyển:
                             </Typography>
@@ -1149,7 +1149,7 @@ export default function OrderTrackingPage() {
                               {order.information.shipping.shippingType || "N/A"}
                             </Typography>
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography variant="body2" color="text.secondary">
                               Khu vực:
                             </Typography>
@@ -1157,7 +1157,7 @@ export default function OrderTrackingPage() {
                               {order.information.shipping.area || "N/A"}
                             </Typography>
                           </Grid>
-                          <Grid item xs={12} sm={6}>
+                          <Grid size={{ xs: 12, sm: 6 }}>
                             <Typography variant="body2" color="text.secondary">
                               Thời gian dự kiến:
                             </Typography>
@@ -1167,7 +1167,7 @@ export default function OrderTrackingPage() {
                             </Typography>
                           </Grid>
                           {order.information.shipping.notes && (
-                            <Grid item xs={12}>
+                            <Grid size={{ xs: 12 }}>
                               <Typography
                                 variant="body2"
                                 color="text.secondary"

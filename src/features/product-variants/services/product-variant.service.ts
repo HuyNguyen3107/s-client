@@ -53,9 +53,10 @@ export class ProductVariantService implements IProductVariantService {
       );
 
       // Handle both wrapped and direct response formats
-      const result = response.data.data || response.data;
+      const result = (response.data.data ||
+        response.data) as ProductVariantWithProduct;
 
-      if (!result || !result.id) {
+      if (!result || !("id" in result) || !result.id) {
         throw new Error("Product variant not found");
       }
 
@@ -98,9 +99,10 @@ export class ProductVariantService implements IProductVariantService {
       );
 
       // Handle both wrapped and direct response formats
-      const result = response.data.data || response.data;
+      const result = (response.data.data ||
+        response.data) as ProductVariantWithProduct;
 
-      if (!result || !result.id) {
+      if (!result || !("id" in result) || !result.id) {
         throw new Error("Failed to create product variant");
       }
 
@@ -124,9 +126,10 @@ export class ProductVariantService implements IProductVariantService {
       );
 
       // Handle both wrapped and direct response formats
-      const result = response.data.data || response.data;
+      const result = (response.data.data ||
+        response.data) as ProductVariantWithProduct;
 
-      if (!result || !result.id) {
+      if (!result || !("id" in result) || !result.id) {
         throw new Error("Failed to update product variant");
       }
 
@@ -150,9 +153,10 @@ export class ProductVariantService implements IProductVariantService {
       );
 
       // Handle both wrapped and direct response formats
-      const result = response.data.data || response.data;
+      const result = (response.data.data ||
+        response.data) as ProductVariantWithProduct;
 
-      if (!result || !result.id) {
+      if (!result || !("id" in result) || !result.id) {
         throw new Error("Failed to update product variant status");
       }
 
@@ -185,9 +189,10 @@ export class ProductVariantService implements IProductVariantService {
       );
 
       // Handle both wrapped and direct response formats
-      const result = response.data.data || response.data;
+      const result = (response.data.data ||
+        response.data) as ProductVariantWithProduct;
 
-      if (!result || !result.id) {
+      if (!result || !("id" in result) || !result.id) {
         throw new Error("Failed to duplicate product variant");
       }
 
