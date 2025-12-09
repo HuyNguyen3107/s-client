@@ -1347,9 +1347,6 @@ export default function OrderTrackingPage() {
                 • Mã đơn hàng có định dạng: <strong>ORD-YYYYMMDD-XXXX</strong>
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                • Kiểm tra email xác nhận đơn hàng để tìm mã
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
                 • Liên hệ hỗ trợ nếu bạn cần trợ giúp
               </Typography>
             </Box>
