@@ -1,0 +1,117 @@
+.cardsSection {
+    width: 100%;
+    margin-top: 28px;
+    /* spacing above the cards section */
+    padding: 24px 20px;
+    /* outer padding around the frame */
+    background: transparent;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    gap: 32px;
+    justify-content: center;
+}
+
+.card {
+    flex: 1 1 0;
+    background: #fff;
+    border: 1.5px solid #7a2323;
+    border-radius: 18px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(122, 35, 35, 0.07);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    min-width: 0;
+    min-height: 560px;
+    transition: box-shadow 0.2s;
+    color: #7a2323;
+    padding: 14px;
+    /* inset padding for each card */
+}
+
+.highlight {
+    background: #7a2323;
+    border: 1.5px solid #7a2323;
+    color: #fff;
+    box-shadow: 0 4px 24px rgba(122, 35, 35, 0.10);
+    transform: translateY(28px);
+    transition: transform 200ms ease;
+}
+
+.imageWrap {
+    width: 100%;
+    height: 300px;
+    overflow: hidden;
+    border-radius: 12px;
+    /* match inner radius with card padding */
+    background: #fff;
+}
+
+.highlight .imageWrap {
+    background: #7a2323;
+}
+
+.imageWrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    border-radius: 12px;
+    /* match image corners */
+}
+
+.textWrap {
+    padding: 16px 12px 14px 12px;
+    /* reduced because card already has padding */
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-size: 1.08rem;
+    line-height: 1.7;
+    text-align: left;
+    flex: 1 1 0;
+    display: flex;
+    align-items: flex-end;
+}
+
+.highlight .textWrap {
+    color: #fff;
+}
+
+.card p {
+    margin: 0;
+    white-space: pre-line;
+}
+
+@media (max-width: 1100px) {
+    .container {
+        gap: 18px;
+        max-width: 98vw;
+    }
+}
+
+@media (max-width: 900px) {
+    .container {
+        flex-direction: column;
+        gap: 20px;
+        max-width: 98vw;
+    }
+
+    .card {
+        min-height: 460px;
+    }
+
+    .imageWrap {
+        height: 200px;
+    }
+
+    /* reset center-card offset on stacked layout */
+    .highlight {
+        transform: none;
+    }
+}

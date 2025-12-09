@@ -1,0 +1,75 @@
+.infoRoot {
+    padding: 28px 0 64px;
+
+    @media (max-width: 768px) {
+        padding: 20px 0 48px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 16px 0 32px;
+    }
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 18px;
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    @media (max-width: 480px) {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+}
+
+.item {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    background: #fff;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px solid #f0eaea;
+
+    @media (max-width: 768px) {
+        padding: 12px 14px;
+        border-radius: 8px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 10px 12px;
+        gap: 10px;
+    }
+}
+
+.icon {
+    font-size: 20px;
+    color: #7a2323;
+
+    @media (max-width: 480px) {
+        font-size: 18px;
+    }
+}
+
+.label {
+    font-weight: 700;
+    color: #4a2b2b;
+    font-size: 14px;
+
+    @media (max-width: 480px) {
+        font-size: 12px;
+    }
+}
+
+.value {
+    color: #5a3a3a;
+    font-size: 14px;
+
+    @media (max-width: 480px) {
+        font-size: 12px;
+    }
+}

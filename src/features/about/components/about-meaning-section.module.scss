@@ -1,0 +1,175 @@
+.aboutMeaningSection {
+    width: 100%;
+    background: #fff;
+    border-radius: 16px;
+    border: 1.5px solid #bcbcbc;
+    margin: 40px auto 0 auto;
+    padding: 32px 24px;
+    box-sizing: border-box;
+    max-width: 1200px;
+
+    @media (max-width: 950px) {
+        padding: 28px 20px;
+        margin: 30px auto 0 auto;
+        border-radius: 12px;
+    }
+
+    @media (max-width: 640px) {
+        padding: 24px 16px;
+        margin: 24px auto 0 auto;
+        border-radius: 10px;
+    }
+}
+
+.logoTitle {
+    font-family: 'Barox', serif;
+    color: #7a2323;
+    font-size: 3.2rem;
+    text-align: center;
+    letter-spacing: 0.12em;
+    font-weight: normal;
+    margin: 0 0 24px 0;
+    line-height: 1.1;
+
+    @media (max-width: 950px) {
+        font-size: 2.8rem;
+        margin: 0 0 20px 0;
+        letter-spacing: 0.1em;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 2.2rem;
+        margin: 0 0 16px 0;
+        letter-spacing: 0.08em;
+    }
+}
+
+.contentWrap {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 40px;
+
+    @media (max-width: 950px) {
+        flex-direction: column;
+        gap: 24px;
+    }
+
+    @media (max-width: 640px) {
+        gap: 20px;
+    }
+}
+
+.textWrap {
+    flex: 0 0 40%;
+    max-width: 40%;
+
+    @media (max-width: 950px) {
+        flex: 0 0 100%;
+        max-width: 100%;
+    }
+}
+
+.heading {
+    color: #7a2323;
+    font-size: 1.6rem;
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-weight: bold;
+    margin-bottom: 18px;
+
+    @media (max-width: 950px) {
+        font-size: 1.4rem;
+        margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 1.2rem;
+        margin-bottom: 14px;
+    }
+}
+
+.textWrap p {
+    color: #7a2323;
+    font-size: 1.08rem;
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    margin-bottom: 12px;
+    line-height: 1.7;
+
+    @media (max-width: 950px) {
+        font-size: 1rem;
+        margin-bottom: 12px;
+        line-height: 1.6;
+    }
+
+    @media (max-width: 640px) {
+        font-size: 0.95rem;
+        margin-bottom: 10px;
+        line-height: 1.6;
+    }
+}
+
+.textWrap b {
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-weight: bold;
+}
+
+.textWrap i {
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-style: italic;
+}
+
+.imageWrap {
+    flex: 0 0 60%;
+    max-width: 60%;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 460px;
+    max-height: 460px;
+
+    @media (max-width: 950px) {
+        flex: 0 0 100%;
+        max-width: 100%;
+        height: 380px;
+        max-height: 380px;
+        border-radius: 12px;
+    }
+
+    @media (max-width: 640px) {
+        height: 300px;
+        max-height: 300px;
+        border-radius: 10px;
+    }
+}
+
+.imageWrap img {
+    width: 100%;
+    height: auto;
+    max-height: 100%;
+    border-radius: 16px;
+    display: block;
+    object-fit: cover;
+
+    @media (max-width: 950px) {
+        border-radius: 12px;
+    }
+
+    @media (max-width: 640px) {
+        border-radius: 10px;
+    }
+}
+
+@media (max-width: 950px) {
+    .textWrap b {
+        font-family: 'UTM-Avo', Arial, sans-serif;
+        font-weight: bold;
+    }
+
+    .textWrap i {
+        font-family: 'UTM-Avo', Arial, sans-serif;
+        font-style: italic;
+    }
+}

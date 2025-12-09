@@ -1,0 +1,52 @@
+export const MUTATION_KEYS = {
+  LOGOUT: "logout",
+  LOGIN: "login",
+  REFRESH: "refresh",
+  CREATE_FEEDBACK: "create_feedback",
+  UPDATE_FEEDBACK: "update_feedback",
+  DELETE_FEEDBACK: "delete_feedback",
+  UPLOAD_IMAGE: "upload_image",
+  DELETE_IMAGE: "delete_image",
+  CREATE_PROMOTION: "create_promotion",
+  UPDATE_PROMOTION: "update_promotion",
+  DELETE_PROMOTION: "delete_promotion",
+  VALIDATE_PROMOTION: "validate_promotion",
+  APPLY_PROMOTION: "apply_promotion",
+  // Collections
+  CREATE_COLLECTION: "create_collection",
+  UPDATE_COLLECTION: "update_collection",
+  DELETE_COLLECTION: "delete_collection",
+  TOGGLE_COLLECTION_STATUS: "toggle_collection_status",
+  // Product Categories
+  CREATE_PRODUCT_CATEGORY: "create_product_category",
+  UPDATE_PRODUCT_CATEGORY: "update_product_category",
+  DELETE_PRODUCT_CATEGORY: "delete_product_category",
+  // Product Customs
+  CREATE_PRODUCT_CUSTOM: "create_product_custom",
+  UPDATE_PRODUCT_CUSTOM: "update_product_custom",
+  UPDATE_PRODUCT_CUSTOM_STATUS: "update_product_custom_status",
+  DELETE_PRODUCT_CUSTOM: "delete_product_custom",
+  // User management
+  CREATE_USER: "create_user",
+  UPDATE_USER: "update_user",
+  DELETE_USER: "delete_user",
+  TOGGLE_USER_STATUS: "toggle_user_status",
+  ASSIGN_ROLES_TO_USER: "assign_roles_to_user",
+  REMOVE_ROLES_FROM_USER: "remove_roles_from_user",
+  BATCH_USER_OPERATIONS: "batch_user_operations",
+  // Backgrounds
+  CREATE_BACKGROUND: "create_background",
+  UPDATE_BACKGROUND: "update_background",
+  DELETE_BACKGROUND: "delete_background",
+  UPLOAD_BACKGROUND_IMAGE: "upload_background_image",
+  DELETE_BACKGROUND_IMAGE: "delete_background_image",
+  // Consultations
+  CREATE_CONSULTATION: "create_consultation",
+  UPDATE_CONSULTATION_STATUS: "update_consultation_status",
+  DELETE_CONSULTATION: "delete_consultation",
+  ASSIGN_CONSULTATION: "assign_consultation",
+  // Informations
+  CREATE_INFORMATION: "create_information",
+  UPDATE_INFORMATION: "update_information",
+  DELETE_INFORMATION: "delete_information",
+};

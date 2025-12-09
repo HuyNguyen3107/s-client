@@ -1,0 +1,682 @@
+/* Shipping Fees Global Styles */
+
+/* Main page container */
+.shipping-fees-list-page {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.shipping-fees-list-page__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.shipping-fees-list-page__title-section {
+  flex: 1;
+}
+
+.shipping-fees-list-page__title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0 0 8px 0;
+}
+
+.shipping-fees-list-page__description {
+  font-size: 16px;
+  color: #666;
+  margin: 0;
+}
+
+.shipping-fees-list-page__actions {
+  display: flex;
+  gap: 12px;
+}
+
+.shipping-fees-list-page__button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shipping-fees-list-page__button--primary {
+  background-color: #2563eb;
+  color: white;
+}
+
+.shipping-fees-list-page__button--primary:hover {
+  background-color: #1d4ed8;
+}
+
+/* Statistics */
+.shipping-fees-list-page__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.shipping-fees-list-page__stat {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.shipping-fees-list-page__stat-label {
+  font-size: 14px;
+  color: #6b7280;
+  font-weight: 500;
+}
+
+.shipping-fees-list-page__stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+}
+
+/* Filters */
+.shipping-fees-list-page__filters {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 24px;
+}
+
+.shipping-fees-list-page__search {
+  margin-bottom: 16px;
+}
+
+.shipping-fees-list-page__search-input {
+  width: 100%;
+  max-width: 400px;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.shipping-fees-list-page__filter-group {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.shipping-fees-list-page__filter-select {
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  min-width: 150px;
+}
+
+.shipping-fees-list-page__filter-button {
+  padding: 10px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  background: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shipping-fees-list-page__filter-button:hover {
+  background-color: #f9fafb;
+}
+
+.shipping-fees-list-page__filter-button--reset {
+  color: #dc2626;
+  border-color: #dc2626;
+}
+
+.shipping-fees-list-page__filter-button--reset:hover {
+  background-color: #fef2f2;
+}
+
+/* Content */
+.shipping-fees-list-page__content {
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  overflow: hidden;
+}
+
+/* Error */
+.shipping-fees-list-page__error {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #dc2626;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.shipping-fees-list-page__retry-button {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+/* Modal */
+.shipping-fees-list-page__modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+/* Table Styles */
+.shipping-fee-table {
+  width: 100%;
+}
+
+.shipping-fee-table__wrapper {
+  overflow-x: auto;
+}
+
+.shipping-fee-table__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shipping-fee-table__head-cell {
+  padding: 16px;
+  text-align: left;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+}
+
+.shipping-fee-table__head-cell--sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.shipping-fee-table__head-cell--sortable:hover {
+  background-color: #f3f4f6;
+}
+
+.shipping-fee-table__body-cell {
+  padding: 16px;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.shipping-fee-table__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.shipping-fee-table__action {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shipping-fee-table__action--edit {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.shipping-fee-table__action--edit:hover {
+  background-color: #2563eb;
+}
+
+.shipping-fee-table__action--delete {
+  background-color: #ef4444;
+  color: white;
+}
+
+.shipping-fee-table__action--delete:hover {
+  background-color: #dc2626;
+}
+
+.shipping-fee-table__pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.shipping-fee-table__pagination-controls {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.shipping-fee-table__pagination-btn {
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 4px;
+  background: white;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.shipping-fee-table__pagination-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shipping-fee-table__pagination-btn:hover:not(:disabled) {
+  background-color: #f9fafb;
+}
+
+/* Form Styles */
+.shipping-fee-form {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.shipping-fee-form__header {
+  margin-bottom: 24px;
+}
+
+.shipping-fee-form__title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.shipping-fee-form__field {
+  margin-bottom: 20px;
+}
+
+.shipping-fee-form__label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #374151;
+  font-size: 14px;
+}
+
+.shipping-fee-form__input,
+.shipping-fee-form__textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.2s ease;
+}
+
+.shipping-fee-form__input:focus,
+.shipping-fee-form__textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.shipping-fee-form__input--error,
+.shipping-fee-form__textarea--error {
+  border-color: #dc2626;
+}
+
+.shipping-fee-form__error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.shipping-fee-form__input-wrapper {
+  position: relative;
+}
+
+.shipping-fee-form__dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-top: none;
+  border-radius: 0 0 8px 8px;
+  max-height: 200px;
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.shipping-fee-form__dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.shipping-fee-form__dropdown-item:hover {
+  background-color: #f3f4f6;
+}
+
+.shipping-fee-form__footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.shipping-fee-form__button {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shipping-fee-form__button--cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.shipping-fee-form__button--cancel:hover {
+  background: #e5e7eb;
+}
+
+.shipping-fee-form__button--submit {
+  background: #2563eb;
+  color: white;
+}
+
+.shipping-fee-form__button--submit:hover {
+  background: #1d4ed8;
+}
+
+.shipping-fee-form__button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.shipping-fee-form__overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+}
+
+/* Modal Styles */
+.shipping-fee-detail-modal,
+.shipping-fee-delete-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.shipping-fee-detail-modal__overlay,
+.shipping-fee-delete-modal__overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.shipping-fee-detail-modal__content,
+.shipping-fee-delete-modal__content {
+  position: relative;
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  max-width: 600px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.shipping-fee-detail-modal__header,
+.shipping-fee-delete-modal__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.shipping-fee-detail-modal__title,
+.shipping-fee-delete-modal__title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1f2937;
+  margin: 0;
+}
+
+.shipping-fee-detail-modal__close {
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.shipping-fee-detail-modal__section {
+  margin-bottom: 24px;
+}
+
+.shipping-fee-detail-modal__section-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 16px 0;
+}
+
+.shipping-fee-detail-modal__fields {
+  display: grid;
+  gap: 12px;
+}
+
+.shipping-fee-detail-modal__field {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 12px;
+  align-items: center;
+}
+
+.shipping-fee-detail-modal__label {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.shipping-fee-detail-modal__value {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+.shipping-fee-detail-modal__value--highlight {
+  font-weight: 600;
+  color: #059669;
+}
+
+.shipping-fee-detail-modal__value--mono {
+  font-family: "UTM-Avo", Arial, sans-serif;
+  font-size: 12px;
+  background: #f3f4f6;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.shipping-fee-detail-modal__notes {
+  padding: 12px;
+  background: #f9fafb;
+  border-radius: 8px;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shipping-fee-detail-modal__footer,
+.shipping-fee-delete-modal__footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 20px;
+  border-top: 1px solid #e5e7eb;
+}
+
+.shipping-fee-detail-modal__button,
+.shipping-fee-delete-modal__button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.shipping-fee-detail-modal__button--secondary,
+.shipping-fee-delete-modal__button--cancel {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.shipping-fee-detail-modal__button--primary {
+  background: #2563eb;
+  color: white;
+}
+
+.shipping-fee-detail-modal__button--danger,
+.shipping-fee-delete-modal__button--confirm {
+  background: #dc2626;
+  color: white;
+}
+
+.shipping-fee-delete-modal__warning {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #fef3c7;
+  padding: 16px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.shipping-fee-delete-modal__warning-icon {
+  font-size: 20px;
+}
+
+.shipping-fee-delete-modal__warning-text {
+  margin: 0;
+  color: #92400e;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.shipping-fee-delete-modal__details {
+  margin-bottom: 20px;
+}
+
+.shipping-fee-delete-modal__details-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0 0 12px 0;
+}
+
+.shipping-fee-delete-modal__detail-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.shipping-fee-delete-modal__detail-label {
+  font-weight: 500;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.shipping-fee-delete-modal__detail-value {
+  color: #1f2937;
+  font-size: 14px;
+}
+
+/* Loading states */
+.shipping-fee-table--loading,
+.shipping-fee-table--empty {
+  padding: 40px;
+  text-align: center;
+  color: #6b7280;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .shipping-fees-list-page {
+    padding: 16px;
+  }
+
+  .shipping-fees-list-page__header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .shipping-fees-list-page__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .shipping-fee-form {
+    padding: 16px;
+  }
+
+  .shipping-fee-detail-modal__field {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

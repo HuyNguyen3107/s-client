@@ -1,0 +1,133 @@
+.summaryCard {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.summaryCard:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.summaryCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(135deg, #731618 0%, #5f0d10 100%);
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.cardIcon {
+    font-size: 24px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #731618 0%, #5f0d10 100%);
+    border-radius: 10px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.cardTitle {
+    font-size: 14px;
+    font-weight: 500;
+    color: #5f0d10;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.cardValue {
+    font-size: 32px;
+    font-weight: 700;
+    color: #731618;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+
+.cardTrend {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.trendText {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.trendUp,
+.up {
+    color: #28a745;
+}
+
+.trendDown,
+.down {
+    color: #dc3545;
+}
+
+.trendNeutral,
+.neutral {
+    color: #6c757d;
+}
+
+/* Color variants */
+.primary::before {
+    background: linear-gradient(135deg, #731618 0%, #5f0d10 100%);
+}
+
+.success::before {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.success .cardIcon {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+}
+
+.warning::before {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.warning .cardIcon {
+    background: linear-gradient(135deg, #ffc107 0%, #fd7e14 100%);
+}
+
+.info::before {
+    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+}
+
+.info .cardIcon {
+    background: linear-gradient(135deg, #17a2b8 0%, #6f42c1 100%);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .summaryCard {
+        padding: 20px;
+    }
+
+    .cardValue {
+        font-size: 28px;
+    }
+
+    .cardIcon {
+        width: 40px;
+        height: 40px;
+        font-size: 20px;
+    }
+}

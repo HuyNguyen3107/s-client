@@ -1,0 +1,224 @@
+@import url("./assets/styles/fonts.css");
+@import url("./assets/styles/utilities.css");
+@import url("./assets/styles/animations.scss");
+@import url("./assets/styles/cross-browser.css");
+
+/* Modern CSS Reset */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevent horizontal scroll from full-bleed sections (hero, promo) */
+html,
+body,
+#root {
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100vh;
+  /* Ensure smooth scrolling */
+  scroll-behavior: smooth;
+  /* Better font rendering */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Better text rendering on all browsers */
+  -webkit-text-size-adjust: 100%;
+  /* Prevent font scaling in landscape on iOS */
+  -ms-text-size-adjust: 100%;
+  /* Prevent font scaling in IE */
+}
+
+/* Remove default styles */
+body {
+  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+}
+
+/* Remove list styles */
+ul,
+ol {
+  list-style: none;
+}
+
+/* Make images easier to work with */
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Remove default form element styling */
+input,
+button,
+textarea,
+select {
+  font: inherit;
+}
+
+/* Avoid text overflows */
+p,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Reusable inner container used by sections to align content with header */
+.site-inner {
+  /* Responsive container: a comfortable max but flexible gutters (use relative unit)
+    75rem ≈ 1200px when root font-size is 16px; rem scales with user's font settings */
+  --site-max: 90rem; /* preferred maximum content width */
+  /* minimal responsive gutter: min 2px, grows slightly, max 8px; include safe-area insets */
+  --site-gutter: max(env(safe-area-inset-left, 0px), clamp(16px, 2vw, 24px));
+
+  width: min(100%, var(--site-max));
+  max-width: var(--site-max);
+  margin-inline: auto;
+  /* ensure padding includes safe-area on devices like iPhone */
+  padding-left: var(--site-gutter);
+  padding-right: max(env(safe-area-inset-right, 0px), var(--site-gutter));
+}
+
+/* Global interactive affordances */
+a,
+button,
+.hero-cta,
+.buy-btn,
+.card-btn {
+  transition: transform 140ms ease, background-color 140ms ease,
+    box-shadow 140ms ease, color 140ms ease;
+  /* Better touch target size for mobile - WCAG 2.1 Level AAA */
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Focus visible for accessibility and keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.hero-cta:focus-visible,
+.buy-btn:focus-visible,
+.card-btn:focus-visible {
+  outline: 3px solid #731618;
+  outline-offset: 3px;
+}
+
+a:hover,
+a:focus {
+  text-decoration: none;
+}
+
+/* Desktop hover effects */
+@media (hover: hover) and (pointer: fine) {
+  .hero-cta:hover,
+  .buy-btn:hover,
+  .card-btn:hover,
+  button:hover {
+    transform: translateY(-2px);
+  }
+}
+
+/* make interactive elements more touch-friendly on small screens */
+@media (max-width: 600px) {
+  .hero-cta,
+  .buy-btn,
+  .card-btn,
+  button {
+    transform: none !important; /* avoid tiny shifts on touch */
+  }
+}
+
+/* Custom scrollbar (brand color) */
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #731618; /* brand primary */
+  border-radius: 10px;
+  border: 2px solid transparent; /* give some breathing room */
+  background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: #5a0f12;
+}
+
+/* Firefox */
+* {
+  scrollbar-color: #731618 transparent;
+  scrollbar-width: thin;
+}
+
+/* Reduced motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Print styles */
+@media print {
+  *,
+  *::before,
+  *::after {
+    background: transparent !important;
+    color: #000 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  a,
+  a:visited {
+    text-decoration: underline;
+  }
+
+  img {
+    page-break-inside: avoid;
+  }
+
+  p,
+  h2,
+  h3 {
+    orphans: 3;
+    widows: 3;
+  }
+
+  h2,
+  h3 {
+    page-break-after: avoid;
+  }
+}

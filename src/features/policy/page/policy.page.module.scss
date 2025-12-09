@@ -1,0 +1,136 @@
+.heroRoot {
+    color: #fff;
+    padding: 48px 0;
+    border-radius: 8px;
+    /* backgroundColor is set by component using the brand color constant */
+    background-color: transparent;
+    /* create space between header and hero */
+
+    /* Breadcrumb specific overrides to ensure 'Trang chủ' and 'Chính sách' are white */
+    .heroRoot .breadcrumbs,
+    .heroRoot .breadcrumbs a,
+    .heroRoot .breadcrumbs span,
+    .heroRoot .breadcrumbs .MuiTypography-root {
+        color: #fff !important;
+    }
+
+    margin-top: 16px;
+
+    @media (max-width: 768px) {
+        padding: 36px 0;
+        margin-top: 12px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 28px 0;
+        margin-top: 8px;
+    }
+}
+
+@media (min-width: 900px) {
+    .heroRoot {
+        margin-top: 40px;
+    }
+}
+
+.breadcrumbs {
+    color: rgba(255, 255, 255, 0.95);
+    margin-bottom: 8px;
+
+    @media (max-width: 480px) {
+        font-size: 13px;
+    }
+}
+
+.title {
+    font-weight: 700;
+    margin-top: 6px;
+
+    @media (max-width: 768px) {
+        font-size: 28px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 24px;
+    }
+}
+
+.subtitle {
+    color: rgba(255, 255, 255, 0.9);
+
+    @media (max-width: 768px) {
+        font-size: 15px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 14px;
+    }
+}
+
+.chip {
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+
+    @media (max-width: 480px) {
+        font-size: 12px;
+    }
+}
+
+/* Ensure all hero text and icons are white */
+.heroRoot .MuiTypography-root {
+    color: #fff;
+}
+
+.heroRoot svg {
+    color: #fff;
+    fill: #fff;
+}
+
+.heroRoot .MuiChip-root {
+    color: #fff;
+}
+
+.heroRoot .MuiChip-label {
+    color: #fff !important;
+}
+
+.heroRoot .MuiChip-icon {
+    .chipLabel {
+        color: #fff;
+        font-weight: 600;
+    }
+
+    color: #fff;
+}
+
+.heroRoot a {
+    color: inherit;
+}
+
+.sectionPaper {
+    padding: 16px;
+    margin-top: 24px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+
+    @media (max-width: 768px) {
+        padding: 14px;
+        margin-top: 20px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 12px;
+        margin-top: 16px;
+    }
+}
+
+.sectionContent {
+    margin-top: 12px;
+    color: #333;
+    line-height: 1.6;
+
+    @media (max-width: 480px) {
+        font-size: 14px;
+        margin-top: 10px;
+    }
+}

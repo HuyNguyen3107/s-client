@@ -1,0 +1,98 @@
+.aboutHeroSection {
+    width: 100%;
+    padding: 48px 0 0 0;
+    background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.imageWrap {
+    width: 100%;
+    /* tăng chiều rộng tối đa */
+    max-width: 1800px;
+    /* tăng max-width lớn hơn nữa */
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    margin: 0 auto;
+    position: relative;
+}
+
+.heroImg {
+    width: 100%;
+    max-width: 100%;
+    height: clamp(280px, 40vw, 500px);
+    object-fit: cover;
+    object-position: center;
+    display: block;
+    border-radius: 16px;
+}
+
+.imageWrap::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(115,22,24,0.25) 100%);
+    pointer-events: none;
+}
+
+.quoteWrap {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+.quoteBox {
+    background: #fffdfa;
+    border: 1.5px solid #e0d6d6;
+    border-radius: 16px;
+    padding: 24px 28px 18px 28px;
+    min-width: 340px;
+    max-width: 600px;
+    width: 100%;
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-sizing: border-box;
+    box-shadow: 0 4px 18px rgba(115, 22, 24, 0.08);
+}
+
+.quote {
+    color: #7a2323;
+    font-size: 1.18rem;
+    font-style: italic;
+    text-align: center;
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    line-height: 1.6;
+}
+
+.quoteIcon {
+    color: #7a2323;
+    font-size: 2.6rem;
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-weight: bold;
+    position: absolute;
+    right: 18px;
+    bottom: 10px;
+    margin: 0;
+}
+
+@media (max-width: 640px) {
+    .quoteBox {
+        min-width: 0;
+        max-width: 90vw;
+        border-radius: 12px;
+        padding: 20px 16px;
+    }
+
+    .quoteIcon {
+        right: 10px;
+        bottom: 6px;
+        font-size: 2rem;
+    }
+}

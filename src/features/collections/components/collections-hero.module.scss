@@ -1,0 +1,157 @@
+.collections-hero {
+    position: relative;
+    padding: 24px 0 48px;
+}
+
+.hero-image {
+    /* increased default height for desktop */
+    height: 420px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+/* Responsive adjustments */
+@media (max-width: 900px) {
+    .hero-image {
+        height: 340px;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-image {
+        height: 240px;
+    }
+}
+
+.hero-center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 24px;
+}
+
+.promotions-container {
+    display: flex;
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    max-width: 800px;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        max-width: 400px;
+    }
+}
+
+.promotion-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #731618;
+    padding: 16px 20px;
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 12px rgba(115, 22, 24, 0.2);
+    min-width: 280px;
+    flex: 1;
+    max-width: 380px;
+
+    @media (max-width: 768px) {
+        min-width: unset;
+        max-width: unset;
+        width: 100%;
+    }
+}
+
+.promotion-info {
+    flex: 1;
+}
+
+.promotion-code {
+    font-size: 18px;
+    font-weight: 700;
+    color: #ffd700;
+    margin-bottom: 4px;
+}
+
+.promotion-description {
+    font-size: 14px;
+    margin-bottom: 6px;
+    opacity: 0.9;
+}
+
+.promotion-discount {
+    font-size: 16px;
+    font-weight: 600;
+    color: #ffd700;
+}
+
+.promotion-countdown {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.copy-btn {
+    background: #fff;
+    color: #731618;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-top: 12px;
+    align-self: center;
+
+    &:hover {
+        background: #f0f0f0;
+    }
+}
+
+.loading {
+    background: #731618;
+    color: #fff;
+    padding: 16px 24px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+}
+
+.error {
+    background: #731618;
+    color: #fff;
+    padding: 16px 24px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: 600;
+    opacity: 0.8;
+}
+
+.cta {
+    margin-top: 20px;
+    background: #731618;
+    color: #fff;
+    border: none;
+    padding: 14px 32px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.2s ease;
+
+    &:hover {
+        background: #5d1215;
+        transform: translateY(-1px);
+    }
+}
+.hero-image::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(115,22,24,0.28) 100%);
+}

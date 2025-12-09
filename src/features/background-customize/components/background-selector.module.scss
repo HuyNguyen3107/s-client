@@ -1,0 +1,254 @@
+.backgroundSelector {
+    padding: 1.5rem;
+}
+
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #666;
+
+    .loadingSpinner {
+        width: 40px;
+        height: 40px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #731618;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin-bottom: 1rem;
+    }
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+
+    @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+}
+
+.searchBox {
+    flex: 1;
+    position: relative;
+    display: flex;
+    align-items: center;
+
+    .searchIcon {
+        position: absolute;
+        left: 12px;
+        color: #666;
+        z-index: 1;
+    }
+
+    .searchInput {
+        width: 100%;
+        padding: 12px 16px 12px 40px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: #731618;
+            box-shadow: 0 0 0 2px rgba(115, 22, 24, 0.1);
+        }
+
+        &::placeholder {
+            color: #999;
+        }
+    }
+
+    .clearBtn {
+        position: absolute;
+        right: 12px;
+        background: none;
+        border: none;
+        color: #666;
+        cursor: pointer;
+        padding: 4px;
+
+        &:hover {
+            color: #731618;
+        }
+    }
+}
+
+.categoryFilter {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 200px;
+
+    .filterIcon {
+        color: #666;
+    }
+
+    .categorySelect {
+        flex: 1;
+        padding: 12px 16px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        font-size: 14px;
+        background: white;
+        cursor: pointer;
+        transition: border-color 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: #731618;
+            box-shadow: 0 0 0 2px rgba(115, 22, 24, 0.1);
+        }
+    }
+
+    @media (max-width: 768px) {
+        min-width: unset;
+    }
+}
+
+.selectionInfo {
+    background: #f8f9fa;
+    padding: 0.75rem 1rem;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #495057;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.backgroundGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1rem;
+
+    @media (max-width: 768px) {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        gap: 0.75rem;
+    }
+}
+
+.emptyState {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 3rem;
+    color: #666;
+
+    p {
+        font-size: 16px;
+        margin: 0;
+    }
+}
+
+.backgroundCard {
+    background: white;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+
+    &:hover:not(.disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-color: #731618;
+    }
+
+    &.selected {
+        border-color: #731618;
+        box-shadow: 0 0 0 2px rgba(115, 22, 24, 0.2);
+    }
+
+    &.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+    }
+}
+
+.backgroundImage {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    background: #f8f9fa;
+
+    img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.2s ease;
+    }
+
+    .selectedOverlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(115, 22, 24, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        .selectedIcon {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            background: rgba(255, 255, 255, 0.2);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        height: 120px;
+    }
+}
+
+.backgroundInfo {
+    padding: 1rem;
+
+    .backgroundName {
+        font-size: 14px;
+        font-weight: 600;
+        color: #333;
+        margin: 0 0 0.5rem 0;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .backgroundPrice {
+        font-size: 13px;
+        font-weight: 600;
+        color: #731618;
+        margin: 0;
+    }
+
+    .freePrice {
+        font-size: 13px;
+        font-weight: 600;
+        color: #28a745;
+        margin: 0;
+    }
+}

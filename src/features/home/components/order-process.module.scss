@@ -1,0 +1,242 @@
+.process-root {
+    padding: 48px 16px 64px;
+    text-align: center;
+}
+
+.process-title {
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-size: clamp(26px, 4vw, 36px);
+    color: #731618;
+    font-weight: 800;
+    margin-bottom: 32px;
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+.process-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.process-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    width: 100%;
+}
+
+.step-card {
+    border-radius: 16px;
+    padding: 18px 20px 12px 20px;
+    text-align: left;
+    font-weight: 700;
+    font-size: clamp(15px, 2.5vw, 17px);
+    margin: 0;
+    border: none;
+    box-shadow: none;
+    transition: background 0.2s, color 0.2s, border 0.2s;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.step-card--primary {
+    background: #731618;
+    color: #fff;
+}
+
+.step-card--outline {
+    background: #fff;
+    color: #731618;
+    border: 2px solid #731618;
+}
+
+.step-title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 4px;
+    flex-wrap: wrap;
+}
+
+.step-num {
+    font-size: clamp(16px, 2.8vw, 18px);
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    color: inherit;
+}
+
+.step-title {
+    font-size: clamp(15px, 2.5vw, 17px);
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: inherit;
+    text-transform: uppercase;
+}
+
+.step-desc {
+    font-size: clamp(13px, 2.2vw, 15px);
+    font-weight: 400;
+    color: inherit;
+    opacity: 0.92;
+    margin-left: 0;
+    line-height: 1.5;
+}
+
+.process-image-wrap {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.process-image-wrap img {
+    width: 100%;
+    max-width: 100%;
+    border-radius: 12px;
+    box-shadow: none;
+    height: auto;
+}
+
+.process-dots {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 18px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #d1bcbc;
+    display: inline-block;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.active-dot {
+    background: #731618;
+    transform: scale(1.2);
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .process-root {
+        padding: 32px 12px 48px;
+    }
+
+    .process-title {
+        margin-bottom: 24px;
+    }
+
+    .process-grid {
+        gap: 24px;
+    }
+
+    .process-steps {
+        gap: 12px;
+    }
+
+    .step-card {
+        padding: 16px 16px 10px 16px;
+    }
+
+    .step-desc {
+        margin-left: 0;
+        margin-top: 4px;
+    }
+
+    .process-image-wrap {
+        flex-direction: column;
+    }
+
+    .process-image-wrap img {
+        max-width: 100%;
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 899px) {
+    .process-root {
+        padding: 40px 20px 56px;
+    }
+
+    .process-grid {
+        gap: 28px;
+    }
+
+    .step-desc {
+        margin-left: 26px;
+    }
+
+    .process-image-wrap {
+        flex-direction: column;
+    }
+
+    .process-image-wrap img {
+        max-width: 400px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+    .process-root {
+        padding: 64px 24px 80px;
+    }
+
+    .process-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        align-items: start;
+        gap: 48px;
+        justify-content: center;
+    }
+
+    .process-steps {
+        gap: 20px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .step-card {
+        padding: 20px 24px 14px 24px;
+    }
+
+    .step-desc {
+        margin-left: 26px;
+    }
+
+    .process-image-wrap {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: stretch;
+    }
+
+    .process-image-wrap img {
+        width: 100%;
+        max-width: 520px;
+        max-height: 400px;
+        height: auto;
+        object-fit: cover;
+        border-radius: 16px;
+        box-shadow: none;
+        display: block;
+        align-self: flex-end;
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    .process-grid {
+        gap: 64px;
+    }
+
+    .process-image-wrap img {
+        max-width: 600px;
+        max-height: 450px;
+    }
+}

@@ -1,0 +1,233 @@
+.footer-root {
+    width: 100%;
+    padding: 40px 0 32px;
+    color: #fff;
+}
+
+.footer-inner {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 32px;
+    align-items: start;
+}
+
+.brand {
+    .brand-title {
+        font-family: 'Barox', serif;
+        font-size: clamp(28px, 5vw, 36px);
+        margin-bottom: 12px;
+        color: #fff;
+        line-height: 1.2;
+    }
+
+    .brand-tagline {
+        margin-bottom: 16px;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: clamp(13px, 2vw, 15px);
+        line-height: 1.6;
+    }
+
+    .social {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        a:hover,
+        a:focus {
+            background: rgba(255, 255, 255, 0.95);
+            color: #731618;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+        }
+
+        a:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+
+        svg {
+            width: 18px;
+            height: 18px;
+        }
+    }
+}
+
+.links {
+    .links-heading {
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #fff;
+        font-size: clamp(16px, 2.5vw, 18px);
+        line-height: 1.2;
+    }
+
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    li {
+        margin-bottom: 12px;
+    }
+
+    a {
+        color: rgba(255, 255, 255, 0.95);
+        text-decoration: none;
+        opacity: 0.95;
+        font-size: clamp(14px, 2vw, 15px);
+        transition: all 0.2s ease;
+        display: inline-block;
+    }
+
+    a:hover,
+    a:focus {
+        opacity: 1;
+        color: #fff;
+        transform: translateX(4px);
+    }
+
+    a:focus-visible {
+        outline: 2px solid rgba(255, 255, 255, 0.5);
+        outline-offset: 2px;
+    }
+}
+
+.contact {
+    .contact-heading {
+        font-weight: 700;
+        margin-bottom: 16px;
+        color: #fff;
+        font-size: clamp(16px, 2.5vw, 18px);
+        line-height: 1.2;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 14px;
+        color: rgba(255, 255, 255, 0.95);
+        font-size: clamp(13px, 2vw, 15px);
+        line-height: 1.6;
+
+        a {
+            color: rgba(255, 255, 255, 0.95);
+            text-decoration: none;
+            transition: all 0.2s ease;
+        }
+
+        a:hover,
+        a:focus {
+            color: #fff;
+            text-decoration: underline;
+        }
+
+        a:focus-visible {
+            outline: 2px solid rgba(255, 255, 255, 0.5);
+            outline-offset: 2px;
+        }
+    }
+
+    .contact-icon {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 36px;
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+        border: 1.5px solid rgba(255, 255, 255, 0.3);
+        background: rgba(255, 255, 255, 0.05);
+        color: #fff;
+        font-size: 14px;
+        flex-shrink: 0;
+    }
+}
+
+/* Small mobile */
+@media (max-width: 480px) {
+    .footer-root {
+        padding: 32px 0 24px;
+    }
+
+    .footer-inner {
+        gap: 28px;
+    }
+
+    .brand {
+        text-align: center;
+
+        .social {
+            justify-content: center;
+        }
+    }
+
+    .links,
+    .contact {
+        text-align: center;
+
+        ul {
+            text-align: center;
+        }
+
+        .contact-item {
+            justify-content: center;
+        }
+    }
+}
+
+/* Tablet */
+@media (min-width: 481px) and (max-width: 899px) {
+    .footer-inner {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 32px;
+    }
+
+    .brand {
+        grid-column: 1 / -1;
+    }
+}
+
+/* Desktop */
+@media (min-width: 900px) {
+    .footer-root {
+        padding: 48px 0 40px;
+    }
+
+    .footer-inner {
+        grid-template-columns: 1.5fr 1fr 1fr;
+        gap: 40px;
+    }
+
+    .brand {
+        .social a:hover {
+            transform: translateY(-4px);
+        }
+    }
+}
+
+/* Large desktop */
+@media (min-width: 1200px) {
+    .footer-root {
+        padding: 56px 0 48px;
+    }
+
+    .footer-inner {
+        gap: 48px;
+    }
+}
