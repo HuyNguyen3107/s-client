@@ -117,8 +117,7 @@ export const RoleList: React.FC = () => {
 
   const deleteRoleMutation = useDeleteRoleMutation({
     onSuccess: () => {
-      setIsDeleteDialogOpen(false);
-      setSelectedRole(null);
+      handleCloseDeleteDialog();
     },
   });
 
@@ -148,11 +147,6 @@ export const RoleList: React.FC = () => {
     setSelectedRole(role);
   };
 
-  const handleMenuClose = () => {
-    setAnchorEl(null);
-    setSelectedRole(null);
-  };
-
   const handleCreateRole = () => {
     setEditingRole(null);
     setIsFormOpen(true);
@@ -161,12 +155,19 @@ export const RoleList: React.FC = () => {
   const handleEditRole = () => {
     setEditingRole(selectedRole);
     setIsFormOpen(true);
-    handleMenuClose();
+    setAnchorEl(null);
+    setSelectedRole(null);
   };
 
   const handleDeleteRole = () => {
+    // Chỉ đóng menu, giữ selectedRole để dùng cho delete dialog
+    setAnchorEl(null);
     setIsDeleteDialogOpen(true);
-    handleMenuClose();
+  };
+  
+  const handleCloseDeleteDialog = () => {
+    setIsDeleteDialogOpen(false);
+    setSelectedRole(null);
   };
 
   const handleFormSubmit = (data: RoleFormData) => {
@@ -432,7 +433,10 @@ export const RoleList: React.FC = () => {
       <Menu
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
-        onClose={handleMenuClose}
+        onClose={() => {
+          setAnchorEl(null);
+          setSelectedRole(null);
+        }}
       >
         {selectedRole?.isDeletable === false
           ? [
@@ -487,7 +491,7 @@ export const RoleList: React.FC = () => {
       {/* Delete Confirmation Dialog */}
       <Dialog
         open={isDeleteDialogOpen}
-        onClose={() => setIsDeleteDialogOpen(false)}
+        onClose={handleCloseDeleteDialog}
         maxWidth="sm"
         fullWidth
       >
@@ -502,7 +506,7 @@ export const RoleList: React.FC = () => {
           </Typography>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setIsDeleteDialogOpen(false)}>Hủy</Button>
+          <Button onClick={handleCloseDeleteDialog}>Hủy</Button>
           <Button
             onClick={handleConfirmDelete}
             color="error"

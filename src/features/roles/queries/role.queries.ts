@@ -29,8 +29,10 @@ export const useRoles = (
   return useQuery<RoleListResponse, Error>({
     queryKey: [QUERY_KEYS.ROLES, params],
     queryFn: () => roleService.getRoles(params),
-    staleTime: 0, // Always refetch to get latest data
+    staleTime: 0, // Always consider data stale - refetch on mount
     gcTime: 5 * 60 * 1000, // Keep in cache for 5 minutes
+    refetchOnMount: true, // Refetch when component mounts
+    refetchOnWindowFocus: false, // Don't refetch on window focus to avoid unnecessary requests
     ...options,
   });
 };

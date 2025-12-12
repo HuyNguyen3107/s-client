@@ -10,7 +10,6 @@ export interface MenuItemPermission {
 // Map menu paths to required permissions
 export const MENU_PERMISSIONS: Record<string, Permission | null> = {
   "/dashboard": null, // Dashboard accessible to all authenticated users
-  "/dashboard/analytics": PERMISSIONS.REPORTS_VIEW,
 
   // User management
   [ROUTE_PATH.USERS]: PERMISSIONS.USERS_VIEW,
@@ -19,8 +18,8 @@ export const MENU_PERMISSIONS: Record<string, Permission | null> = {
   // Products
   [ROUTE_PATH.PRODUCTS]: PERMISSIONS.PRODUCTS_VIEW,
   [ROUTE_PATH.PRODUCT_CATEGORIES]: PERMISSIONS.PRODUCT_CATEGORIES_VIEW,
-  [ROUTE_PATH.PRODUCT_VARIANTS]: PERMISSIONS.PRODUCTS_VIEW,
-  [ROUTE_PATH.PRODUCT_CUSTOMS]: PERMISSIONS.PRODUCTS_VIEW,
+  [ROUTE_PATH.PRODUCT_VARIANTS]: PERMISSIONS.PRODUCT_VARIANTS_VIEW,
+  [ROUTE_PATH.PRODUCT_CUSTOMS]: PERMISSIONS.PRODUCT_CUSTOMS_VIEW,
 
   // Inventory
   [ROUTE_PATH.INVENTORY]: PERMISSIONS.INVENTORY_VIEW,

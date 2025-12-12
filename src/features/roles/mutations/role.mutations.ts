@@ -51,31 +51,32 @@ export const useCreateRoleWithPermissionsMutation = (
 
       return newRole;
     },
-    onSuccess: async () => {
-      // Invalidate all role-related queries to refresh data
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROLES],
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.PERMISSIONS],
-        }),
-      ]);
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
+      showToast("Tạo vai trò thành công!", "success");
 
-      // Force refetch all queries (both active and inactive)
-      await queryClient.refetchQueries({
+      // Invalidate and refetch roles
+      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.ROLES],
       });
 
-      // Show success notification
-      showToast("Tạo vai trò thành công!", "success");
+      // Wait for refetch to complete
+      await queryClient.refetchQueries({
+        queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
+      });
+
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage = error.message || "Có lỗi xảy ra khi tạo vai trò";
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -90,26 +91,32 @@ export const useCreateRoleMutation = (
 
   return useMutation<Role, Error, CreateRoleRequest>({
     mutationFn: (data) => roleService.createRole(data),
-    onSuccess: async () => {
-      // Invalidate roles list to refetch
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
+      showToast("Tạo vai trò thành công!", "success");
+
+      // Invalidate and refetch roles
       await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.ROLES],
       });
 
-      // Force refetch all queries (both active and inactive)
+      // Wait for refetch to complete
       await queryClient.refetchQueries({
         queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
       });
 
-      // Show success notification
-      showToast("Tạo vai trò thành công!", "success");
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage = error.message || "Có lỗi xảy ra khi tạo vai trò";
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -128,7 +135,10 @@ export const useUpdateRoleMutation = (
 
   return useMutation<Role, Error, { id: string; data: UpdateRoleRequest }>({
     mutationFn: ({ id, data }) => roleService.updateRole(id, data),
-    onSuccess: async (_, variables) => {
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
+      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_UPDATED, "success");
+
       // Invalidate roles list and specific role detail
       await Promise.all([
         queryClient.invalidateQueries({
@@ -139,21 +149,24 @@ export const useUpdateRoleMutation = (
         }),
       ]);
 
-      // Force refetch all queries (both active and inactive)
+      // Wait for refetch to complete
       await queryClient.refetchQueries({
         queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
       });
 
-      // Show success notification
-      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_UPDATED, "success");
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage =
         error.message || ROLE_CONSTANTS.ERROR_MESSAGES.NETWORK_ERROR;
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -188,7 +201,10 @@ export const useUpdateRoleWithPermissionsMutation = (
 
       return updatedRole;
     },
-    onSuccess: async (_, variables) => {
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
+      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_UPDATED, "success");
+
       // Invalidate all role-related queries to refresh data
       await Promise.all([
         queryClient.invalidateQueries({
@@ -200,26 +216,26 @@ export const useUpdateRoleWithPermissionsMutation = (
         queryClient.invalidateQueries({
           queryKey: [QUERY_KEYS.ROLE_PERMISSIONS, variables.id],
         }),
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.PERMISSIONS],
-        }),
       ]);
 
-      // Force refetch all queries (both active and inactive)
+      // Wait for refetch to complete
       await queryClient.refetchQueries({
         queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
       });
 
-      // Show success notification
-      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_UPDATED, "success");
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage =
         error.message || ROLE_CONSTANTS.ERROR_MESSAGES.NETWORK_ERROR;
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -234,30 +250,38 @@ export const useDeleteRoleMutation = (
 
   return useMutation<void, Error, string>({
     mutationFn: (id) => roleService.deleteRole(id),
-    onSuccess: async (_, id) => {
-      // Invalidate roles list and remove specific role from cache
-      await queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.ROLES],
-      });
+    onSuccess: async (data, id, context) => {
+      // Show success notification first
+      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_DELETED, "success");
+
+      // Remove specific role from cache
       queryClient.removeQueries({
         queryKey: [QUERY_KEYS.ROLES, "detail", id],
       });
 
-      // Force refetch all queries (both active and inactive)
-      await queryClient.refetchQueries({
+      // Invalidate roles list
+      await queryClient.invalidateQueries({
         queryKey: [QUERY_KEYS.ROLES],
       });
 
-      // Show success notification
-      showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.ROLE_DELETED, "success");
+      // Wait for refetch to complete
+      await queryClient.refetchQueries({
+        queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
+      });
+
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, id, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage =
         error.message || ROLE_CONSTANTS.ERROR_MESSAGES.NETWORK_ERROR;
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -281,37 +305,45 @@ export const useAssignPermissionsToRoleMutation = (
   >({
     mutationFn: ({ roleId, data }) =>
       rolePermissionService.assignPermissionsToRole(roleId, data),
-    onSuccess: async (_, variables) => {
-      // Invalidate and refetch all related queries immediately
-      await Promise.all([
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROLES],
-          refetchType: "active",
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROLES, "detail", variables.roleId],
-          refetchType: "active",
-        }),
-        queryClient.invalidateQueries({
-          queryKey: [QUERY_KEYS.ROLE_PERMISSIONS, variables.roleId],
-          refetchType: "active",
-        }),
-      ]);
-
-      // Show success notification
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
       showToast(
         ROLE_CONSTANTS.SUCCESS_MESSAGES.PERMISSIONS_ASSIGNED,
         "success"
       );
+
+      // Invalidate and refetch all related queries
+      await Promise.all([
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROLES],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROLES, "detail", variables.roleId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROLE_PERMISSIONS, variables.roleId],
+        }),
+      ]);
+
+      // Wait for refetch to complete
+      await queryClient.refetchQueries({
+        queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
+      });
+
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage =
         error.message ||
         ROLE_CONSTANTS.ERROR_MESSAGES.ASSIGN_PERMISSIONS_FAILED;
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };
 
@@ -331,24 +363,38 @@ export const useRemovePermissionFromRoleMutation = (
   return useMutation<void, Error, { roleId: string; permissionId: string }>({
     mutationFn: ({ roleId, permissionId }) =>
       rolePermissionService.removePermissionFromRole(roleId, permissionId),
-    onSuccess: (_, variables) => {
-      // Invalidate related queries
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ROLES] });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.ROLES, "detail", variables.roleId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: [QUERY_KEYS.ROLE_PERMISSIONS, variables.roleId],
-      });
-      // Show success notification
+    onSuccess: async (data, variables, context) => {
+      // Show success notification first
       showToast(ROLE_CONSTANTS.SUCCESS_MESSAGES.PERMISSION_REMOVED, "success");
+
+      // Invalidate related queries
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.ROLES] }),
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROLES, "detail", variables.roleId],
+        }),
+        queryClient.invalidateQueries({
+          queryKey: [QUERY_KEYS.ROLE_PERMISSIONS, variables.roleId],
+        }),
+      ]);
+
+      // Wait for refetch to complete
+      await queryClient.refetchQueries({
+        queryKey: [QUERY_KEYS.ROLES],
+        type: "active",
+      });
+
+      // Call original onSuccess if provided
+      options?.onSuccess?.(data, variables, context);
     },
-    onError: (error) => {
+    onError: (error, variables, context) => {
       // Show error notification
       const errorMessage =
         error.message || ROLE_CONSTANTS.ERROR_MESSAGES.REMOVE_PERMISSION_FAILED;
       showToast(errorMessage, "error");
+
+      // Call original onError if provided
+      options?.onError?.(error, variables, context);
     },
-    ...options,
   });
 };

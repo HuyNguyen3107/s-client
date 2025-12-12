@@ -63,16 +63,15 @@ export class RoleService implements IRoleService {
       );
 
       // Handle different API response formats
-      if (Array.isArray(response.data.data)) {
+      const data = response.data.data;
+      if (Array.isArray(data)) {
         return {
-          data: response.data.data,
+          data: data,
           meta: {
-            total: response.data.data.length,
+            total: data.length,
             page: params?.page || 1,
             limit: params?.limit || 10,
-            totalPages: Math.ceil(
-              response.data.data.length / (params?.limit || 10)
-            ),
+            totalPages: Math.ceil(data.length / (params?.limit || 10)),
           },
         };
       }
@@ -155,7 +154,14 @@ export class RoleService implements IRoleService {
    */
   async deleteRole(id: string): Promise<void> {
     try {
-      await http.delete<ApiResponse<void>>(API_PATHS.ROLE_BY_ID(id));
+      const response = await http.delete<ApiResponse<void>>(
+        API_PATHS.ROLE_BY_ID(id)
+      );
+
+      // Check if deletion was successful
+      if (response.data && response.data.success === false) {
+        throw new Error(response.data.message || "Failed to delete role");
+      }
     } catch (error) {
       throw this.handleError(error, "Failed to delete role");
     }

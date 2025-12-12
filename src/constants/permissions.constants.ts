@@ -1,6 +1,9 @@
 /**
  * Permission constants aligned with backend
  * Format: module.action
+ *
+ * LƯU Ý: File này được đồng bộ với server/src/permissions/constants/permissions.constants.ts
+ * Không thêm quyền thừa không có trong API
  */
 export const PERMISSIONS = {
   // ============================================
@@ -56,7 +59,6 @@ export const PERMISSIONS = {
   COLLECTIONS_CREATE: "collections.create",
   COLLECTIONS_UPDATE: "collections.update",
   COLLECTIONS_DELETE: "collections.delete",
-  COLLECTIONS_LIST: "collections.list",
   COLLECTIONS_MANAGE: "collections.manage",
 
   // ============================================
@@ -66,7 +68,6 @@ export const PERMISSIONS = {
   PRODUCTS_CREATE: "products.create",
   PRODUCTS_UPDATE: "products.update",
   PRODUCTS_DELETE: "products.delete",
-  PRODUCTS_LIST: "products.list",
   PRODUCTS_MANAGE: "products.manage",
 
   // ============================================
@@ -76,7 +77,6 @@ export const PERMISSIONS = {
   PRODUCT_VARIANTS_CREATE: "product-variants.create",
   PRODUCT_VARIANTS_UPDATE: "product-variants.update",
   PRODUCT_VARIANTS_DELETE: "product-variants.delete",
-  PRODUCT_VARIANTS_LIST: "product-variants.list",
   PRODUCT_VARIANTS_MANAGE: "product-variants.manage",
 
   // ============================================
@@ -86,7 +86,6 @@ export const PERMISSIONS = {
   PRODUCT_CATEGORIES_CREATE: "product-categories.create",
   PRODUCT_CATEGORIES_UPDATE: "product-categories.update",
   PRODUCT_CATEGORIES_DELETE: "product-categories.delete",
-  PRODUCT_CATEGORIES_LIST: "product-categories.list",
   PRODUCT_CATEGORIES_MANAGE: "product-categories.manage",
 
   // ============================================
@@ -96,7 +95,6 @@ export const PERMISSIONS = {
   PRODUCT_CUSTOMS_CREATE: "product-customs.create",
   PRODUCT_CUSTOMS_UPDATE: "product-customs.update",
   PRODUCT_CUSTOMS_DELETE: "product-customs.delete",
-  PRODUCT_CUSTOMS_LIST: "product-customs.list",
   PRODUCT_CUSTOMS_MANAGE: "product-customs.manage",
 
   // ============================================
@@ -106,14 +104,12 @@ export const PERMISSIONS = {
   BACKGROUNDS_CREATE: "backgrounds.create",
   BACKGROUNDS_UPDATE: "backgrounds.update",
   BACKGROUNDS_DELETE: "backgrounds.delete",
-  BACKGROUNDS_LIST: "backgrounds.list",
   BACKGROUNDS_MANAGE: "backgrounds.manage",
 
   // ============================================
   // QUYỀN QUẢN LÝ ĐƠN HÀNG
   // ============================================
   ORDERS_VIEW: "orders.view",
-  ORDERS_CREATE: "orders.create",
   ORDERS_UPDATE: "orders.update",
   ORDERS_DELETE: "orders.delete",
   ORDERS_LIST: "orders.list",
@@ -121,7 +117,6 @@ export const PERMISSIONS = {
   ORDERS_ASSIGN: "orders.assign",
   ORDERS_UPDATE_STATUS: "orders.update-status",
   ORDERS_TRANSFER: "orders.transfer",
-  ORDERS_EXPORT: "orders.export",
 
   // ============================================
   // QUYỀN QUẢN LÝ KHO HÀNG
@@ -145,7 +140,6 @@ export const PERMISSIONS = {
   PROMOTIONS_DELETE: "promotions.delete",
   PROMOTIONS_LIST: "promotions.list",
   PROMOTIONS_MANAGE: "promotions.manage",
-  PROMOTIONS_VALIDATE: "promotions.validate",
 
   // ============================================
   // QUYỀN QUẢN LÝ PHÍ VẬN CHUYỂN
@@ -154,17 +148,14 @@ export const PERMISSIONS = {
   SHIPPING_FEES_CREATE: "shipping-fees.create",
   SHIPPING_FEES_UPDATE: "shipping-fees.update",
   SHIPPING_FEES_DELETE: "shipping-fees.delete",
-  SHIPPING_FEES_LIST: "shipping-fees.list",
   SHIPPING_FEES_MANAGE: "shipping-fees.manage",
 
   // ============================================
   // QUYỀN QUẢN LÝ PHẢN HỒI
   // ============================================
   FEEDBACKS_VIEW: "feedbacks.view",
-  FEEDBACKS_CREATE: "feedbacks.create",
   FEEDBACKS_UPDATE: "feedbacks.update",
   FEEDBACKS_DELETE: "feedbacks.delete",
-  FEEDBACKS_LIST: "feedbacks.list",
   FEEDBACKS_MANAGE: "feedbacks.manage",
   FEEDBACKS_RESPOND: "feedbacks.respond",
 
@@ -172,10 +163,9 @@ export const PERMISSIONS = {
   // QUYỀN QUẢN LÝ TƯ VẤN
   // ============================================
   CONSULTATIONS_VIEW: "consultations.view",
-  CONSULTATIONS_CREATE: "consultations.create",
+  CONSULTATIONS_LIST: "consultations.list",
   CONSULTATIONS_UPDATE: "consultations.update",
   CONSULTATIONS_DELETE: "consultations.delete",
-  CONSULTATIONS_LIST: "consultations.list",
   CONSULTATIONS_MANAGE: "consultations.manage",
 
   // ============================================
@@ -185,54 +175,14 @@ export const PERMISSIONS = {
   INFORMATIONS_CREATE: "informations.create",
   INFORMATIONS_UPDATE: "informations.update",
   INFORMATIONS_DELETE: "informations.delete",
-  INFORMATIONS_LIST: "informations.list",
   INFORMATIONS_MANAGE: "informations.manage",
-
-  // ============================================
-  // QUYỀN QUẢN LÝ THÔNG BÁO
-  // ============================================
-  NOTIFICATIONS_VIEW: "notifications.view",
-  NOTIFICATIONS_CREATE: "notifications.create",
-  NOTIFICATIONS_UPDATE: "notifications.update",
-  NOTIFICATIONS_DELETE: "notifications.delete",
-  NOTIFICATIONS_LIST: "notifications.list",
-  NOTIFICATIONS_MANAGE: "notifications.manage",
-  NOTIFICATIONS_SEND: "notifications.send",
 
   // ============================================
   // QUYỀN QUẢN LÝ UPLOAD
   // ============================================
-  UPLOAD_VIEW: "upload.view",
   UPLOAD_CREATE: "upload.create",
   UPLOAD_DELETE: "upload.delete",
   UPLOAD_MANAGE: "upload.manage",
-
-  // ============================================
-  // QUYỀN BÁO CÁO & THỐNG KÊ
-  // ============================================
-  REPORTS_VIEW: "reports.view",
-  REPORTS_ORDERS: "reports.orders",
-  REPORTS_INVENTORY: "reports.inventory",
-  REPORTS_REVENUE: "reports.revenue",
-  REPORTS_USERS: "reports.users",
-  REPORTS_EXPORT: "reports.export",
-  REPORTS_MANAGE: "reports.manage",
-
-  // ============================================
-  // QUYỀN CÀI ĐẶT HỆ THỐNG
-  // ============================================
-  SETTINGS_VIEW: "settings.view",
-  SETTINGS_UPDATE: "settings.update",
-  SETTINGS_MANAGE: "settings.manage",
-
-  // ============================================
-  // QUYỀN HỆ THỐNG (SUPER ADMIN)
-  // ============================================
-  SYSTEM_ADMIN: "system.admin",
-  SYSTEM_CONFIG: "system.config",
-  SYSTEM_BACKUP: "system.backup",
-  SYSTEM_RESTORE: "system.restore",
-  SYSTEM_LOGS: "system.logs",
 } as const;
 
 // Permission types
@@ -258,9 +208,6 @@ export const PAGE_PERMISSIONS = {
   FEEDBACKS: PERMISSIONS.FEEDBACKS_VIEW,
   CONSULTATIONS: PERMISSIONS.CONSULTATIONS_VIEW,
   INFORMATIONS: PERMISSIONS.INFORMATIONS_VIEW,
-  NOTIFICATIONS: PERMISSIONS.NOTIFICATIONS_VIEW,
-  REPORTS: PERMISSIONS.REPORTS_VIEW,
-  SETTINGS: PERMISSIONS.SETTINGS_VIEW,
 } as const;
 
 // Permission groups for easier management
@@ -286,12 +233,10 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.PRODUCTS_CREATE,
     PERMISSIONS.PRODUCTS_UPDATE,
     PERMISSIONS.PRODUCTS_DELETE,
-    PERMISSIONS.PRODUCTS_LIST,
     PERMISSIONS.PRODUCTS_MANAGE,
   ],
   ORDER_MANAGEMENT: [
     PERMISSIONS.ORDERS_VIEW,
-    PERMISSIONS.ORDERS_CREATE,
     PERMISSIONS.ORDERS_UPDATE,
     PERMISSIONS.ORDERS_DELETE,
     PERMISSIONS.ORDERS_LIST,
@@ -299,7 +244,6 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.ORDERS_ASSIGN,
     PERMISSIONS.ORDERS_UPDATE_STATUS,
     PERMISSIONS.ORDERS_TRANSFER,
-    PERMISSIONS.ORDERS_EXPORT,
   ],
   INVENTORY_MANAGEMENT: [
     PERMISSIONS.INVENTORY_VIEW,
@@ -311,12 +255,5 @@ export const PERMISSION_GROUPS = {
     PERMISSIONS.INVENTORY_ADJUST,
     PERMISSIONS.INVENTORY_RESERVE,
     PERMISSIONS.INVENTORY_REPORT,
-  ],
-  SYSTEM_MANAGEMENT: [
-    PERMISSIONS.SYSTEM_ADMIN,
-    PERMISSIONS.SYSTEM_CONFIG,
-    PERMISSIONS.SYSTEM_BACKUP,
-    PERMISSIONS.SYSTEM_RESTORE,
-    PERMISSIONS.SYSTEM_LOGS,
   ],
 } as const;

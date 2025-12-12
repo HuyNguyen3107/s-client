@@ -1,6 +1,5 @@
 import styles from "./about-hero-section.module.scss";
 import aboutHeroImg from "@/assets/images/product-2.jpg";
-import { MdFormatQuote } from "react-icons/md";
 
 const AboutHeroSection = () => {
   return (
@@ -21,9 +20,6 @@ const AboutHeroSection = () => {
             "Có món quà nào vừa nhỏ bé, vừa độc đáo, <br />
             vừa giữ lại được cảm xúc không?"
           </p>
-          <div className={styles.quoteIcon} aria-hidden="true">
-            <MdFormatQuote />
-          </div>
         </div>
       </div>
     </section>

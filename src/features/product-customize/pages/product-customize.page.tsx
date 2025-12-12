@@ -1,5 +1,5 @@
-import { useSearchParams, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useState, useMemo } from "react";
 import {
   FaGift,
   FaPlus,
@@ -8,8 +8,11 @@ import {
   FaTimes,
   FaShoppingCart,
   FaPalette,
-  FaClock,
-  FaEye,
+  FaArrowLeft,
+  FaInfoCircle,
+  FaSearch,
+  FaChevronLeft,
+  FaChevronRight,
 } from "react-icons/fa";
 import { useProduct } from "../queries/product-customize.queries";
 import {
@@ -19,9 +22,7 @@ import {
 import type { ProductCustom } from "../../product-variants/services/product-customs.service";
 import styles from "./product-customize.module.scss";
 
-// Interface for product category
-
-// Types for config data
+// Types
 interface ConfigItem {
   id: string;
   name: string;
@@ -36,7 +37,6 @@ interface ConfigItem {
     pricePerUnit: number;
   }>;
   baseQuantity: number;
-  categoryRules: any[];
 }
 
 interface VariantCategoryRule {
@@ -52,1127 +52,353 @@ interface ConfigData {
   maxCustomQuantity: number;
   minCustomQuantity: number;
   allowCustomQuantity: boolean;
-  globalCategoryRules: any[];
   variantCategoryRules: VariantCategoryRule[];
 }
 
-function formatPrice(price: number): string {
+// Utilities
+const formatPrice = (price: number): string => {
   return new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(price);
-}
+};
 
-// Helper function to check product availability
-function getProductAvailability(product: ProductCustom) {
+const getProductAvailability = (product: ProductCustom) => {
   if (!product.inventories || product.inventories.length === 0) {
-    return {
-      available: false,
-      stock: 0,
-      message: "Sản phẩm hiện không có thông tin tồn kho",
-    };
+    return { available: false, stock: 0 };
   }
-
-  // Sum up available stock from all inventory records
   const totalStock = product.inventories.reduce((total, inventory) => {
-    const currentStock = inventory.currentStock || 0;
-    const reservedStock = inventory.reservedStock || 0;
-    const availableStock = currentStock - reservedStock;
-    return total + Math.max(0, availableStock);
+    const available = (inventory.currentStock || 0) - (inventory.reservedStock || 0);
+    return total + Math.max(0, available);
   }, 0);
+  return { available: totalStock > 0, stock: totalStock };
+};
 
-  return {
-    available: totalStock > 0,
-    stock: totalStock,
-    message:
-      totalStock > 0
-        ? `Còn ${totalStock} sản phẩm trong kho`
-        : "Sản phẩm tạm hết hàng",
-  };
-}
+const calculateItemPrice = (quantity: number, priceRules: ConfigItem["priceRules"]): number => {
+  if (!priceRules || priceRules.length === 0) return 0;
+  const rule = priceRules
+    .filter((r) => (r.condition === "greater_than" ? quantity > r.minQuantity : quantity >= r.minQuantity))
+    .sort((a, b) => b.minQuantity - a.minQuantity)[0];
+  return rule ? rule.pricePerUnit * quantity : 0;
+};
 
-// Helper function to check if product can be selected with given quantity
-function canSelectProduct(
-  product: ProductCustom,
-  requestedQuantity: number = 1
-) {
-  const availability = getProductAvailability(product);
-  return {
-    ...availability,
-    canSelect:
-      availability.available && availability.stock >= requestedQuantity,
-    message: availability.available
-      ? availability.stock >= requestedQuantity
-        ? availability.message
-        : `Chỉ còn ${availability.stock} sản phẩm, không đủ cho số lượng yêu cầu (${requestedQuantity})`
-      : availability.message,
-  };
-}
-
-// Component to check and display endow products availability
-function EndowAvailabilityChecker({ endowData }: { endowData: any }) {
-  const [unavailableProducts, setUnavailableProducts] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const checkEndowProductsAvailability = async () => {
-      if (!endowData.customProducts || endowData.customProducts.length === 0) {
-        setIsLoading(false);
-        return;
-      }
-
-      try {
-        const unavailableList: string[] = [];
-
-        for (const cp of endowData.customProducts) {
-          const product = await productCustomsService.getProductCustomById(
-            cp.productCustomId
-          );
-          const availability = canSelectProduct(product, cp.quantity);
-
-          if (!availability.canSelect) {
-            unavailableList.push(`${product.name} (${availability.message})`);
-          }
-        }
-
-        setUnavailableProducts(unavailableList);
-      } catch (error) {
-        console.error("Failed to check endow products availability:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    checkEndowProductsAvailability();
-  }, [endowData.customProducts]);
-
-  if (isLoading) {
-    return null;
-  }
-
-  if (unavailableProducts.length === 0) {
-    return null;
-  }
-
-  return (
-    <div className={styles.endowAvailabilityWarning}>
-      <div className={styles.warningHeader}>
-        <FaTimes className={styles.warningIcon} />
-        <span>Một số sản phẩm ưu đãi hiện không có sẵn:</span>
-      </div>
-      <ul className={styles.unavailableList}>
-        {unavailableProducts.map((productInfo, index) => (
-          <li key={index}>{productInfo}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-
-// Component to display custom product info
-function CustomProductItem({ productCustomId }: { productCustomId: string }) {
-  const [productCustom, setProductCustom] = useState<ProductCustom | null>(
-    null
-  );
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProductCustom = async () => {
-      try {
-        const data = await productCustomsService.getProductCustomById(
-          productCustomId
-        );
-        setProductCustom(data);
-      } catch (error) {
-        console.error(
-          `Failed to fetch product custom ${productCustomId}:`,
-          error
-        );
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchProductCustom();
-  }, [productCustomId]);
-
-  if (isLoading) {
-    return <span>Đang tải thông tin sản phẩm...</span>;
-  }
-
-  if (!productCustom) {
-    return <span>Sản phẩm ID: {productCustomId}</span>;
-  }
-
-  const availability = getProductAvailability(productCustom);
-
-  return (
-    <div className={styles.customProductInfo}>
-      {productCustom.imageUrl && (
-        <img
-          src={productCustom.imageUrl}
-          alt={productCustom.name}
-          className={styles.customProductImage}
-        />
-      )}
-      <div className={styles.customProductDetails}>
-        <span className={styles.customProductName}>{productCustom.name}</span>
-        {productCustom.price && (
-          <span className={styles.customProductPrice}>
-            ({formatPrice(parseInt(productCustom.price) || 0)})
-          </span>
-        )}
-        {/* Show inventory warning for endow products */}
-        {!availability.available && (
-          <span className={styles.endowOutOfStock}>
-            ⚠️ Sản phẩm tạm hết hàng
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// Helper function to parse and display endow items and custom products
-function parseEndowData(endow: any): {
-  items: string[];
-  customProducts: Array<{ productCustomId: string; quantity: number }>;
-} {
-  if (!endow || typeof endow !== "object") {
-    return { items: [], customProducts: [] };
-  }
-
+// Parse endow data
+const parseEndowData = (endow: any) => {
+  if (!endow || typeof endow !== "object") return { items: [], customProducts: [] };
   const items: string[] = [];
-  const customProducts: Array<{ productCustomId: string; quantity: number }> =
-    [];
-
-  // Handle items array - only show content
+  const customProducts: Array<{ productCustomId: string; quantity: number }> = [];
+  
   if (endow.items && Array.isArray(endow.items)) {
     endow.items.forEach((item: any) => {
-      if (item && typeof item === "object" && item.content) {
-        items.push(item.content);
-      }
+      if (item?.content) items.push(item.content);
     });
   }
-
-  // Handle customProducts array - extract productCustomId
   if (endow.customProducts && Array.isArray(endow.customProducts)) {
     endow.customProducts.forEach((cp: any) => {
-      if (cp && cp.productCustomId) {
-        customProducts.push({
-          productCustomId: cp.productCustomId,
-          quantity: cp.quantity || 1,
+      if (cp?.productCustomId) {
+        customProducts.push({ productCustomId: cp.productCustomId, quantity: cp.quantity || 1 });
+      }
+    });
+  }
+  return { items, customProducts };
+};
+
+// Parse option data
+const parseOptionData = (option: any) => {
+  if (!option) return [];
+  const results: Array<{ name: string; description: string; price: number }> = [];
+  
+  if (option.purchaseOptions) {
+    const opts = Array.isArray(option.purchaseOptions) ? option.purchaseOptions : [option.purchaseOptions];
+    opts.forEach((item: any, i: number) => {
+      if (typeof item === "object") {
+        results.push({
+          name: item.name || item.title || `Tùy chọn ${i + 1}`,
+          description: item.content || item.description || "",
+          price: item.price || item.additionalPrice || 0,
         });
       }
     });
   }
+  return results;
+};
 
-  return { items, customProducts };
-}
-
-// Helper function to parse and display option data (add-on options)
-function parseOptionData(option: any) {
-  if (typeof option === "string") {
-    return [{ name: "Tùy chọn", description: option, price: 0 }];
-  }
-
-  if (typeof option === "object" && option) {
-    const results: Array<{ name: string; description: string; price: number }> =
-      [];
-
-    // Handle purchaseOptions structure
-    if (option.purchaseOptions) {
-      const purchaseOptions = option.purchaseOptions;
-
-      // Handle array of purchase options
-      if (Array.isArray(purchaseOptions)) {
-        purchaseOptions.forEach((item: any, index: number) => {
-          if (typeof item === "object") {
-            results.push({
-              name: item.name || item.title || `Tùy chọn ${index + 1}`,
-              description: item.content || item.description || item.desc || "",
-              price: item.price || item.additionalPrice || item.cost || 0,
-            });
-          } else {
-            results.push({
-              name: `Tùy chọn ${index + 1}`,
-              description: String(item),
-              price: 0,
-            });
-          }
-        });
-      } else if (typeof purchaseOptions === "object") {
-        // Handle object with multiple options
-        Object.entries(purchaseOptions).forEach(
-          ([key, value]: [string, any]) => {
-            if (typeof value === "object") {
-              results.push({
-                name: value.name || value.title || key,
-                description:
-                  value.content || value.description || value.desc || "",
-                price: value.price || value.additionalPrice || value.cost || 0,
-              });
-            } else {
-              results.push({
-                name: key,
-                description: String(value),
-                price: 0,
-              });
-            }
-          }
-        );
-      }
-    }
-
-    // Handle array of options (fallback)
-    if (Array.isArray(option) && results.length === 0) {
-      option.forEach((item, index) => {
-        if (typeof item === "object") {
-          results.push({
-            name: item.name || `Tùy chọn ${index + 1}`,
-            description: item.content || item.description || item.desc || "",
-            price: item.price || item.additionalPrice || 0,
-          });
-        } else {
-          results.push({
-            name: `Tùy chọn ${index + 1}`,
-            description: String(item),
-            price: 0,
-          });
-        }
-      });
-    } else if (results.length === 0) {
-      // Handle single option object (fallback)
-      if (option.options && Array.isArray(option.options)) {
-        option.options.forEach((item: any, index: number) => {
-          results.push({
-            name: item.name || `Tùy chọn ${index + 1}`,
-            description: item.content || item.description || item.desc || "",
-            price: item.price || item.additionalPrice || 0,
-          });
-        });
-      } else {
-        // Handle direct object properties (fallback)
-        Object.entries(option).forEach(([key, value]: [string, any]) => {
-          if (typeof value === "object" && value.name) {
-            results.push({
-              name: value.name || key,
-              description:
-                value.content || value.description || value.desc || "",
-              price: value.price || value.additionalPrice || 0,
-            });
-          } else {
-            results.push({
-              name: key,
-              description: String(value),
-              price: 0,
-            });
-          }
-        });
-      }
-    }
-
-    return results;
-  }
-
-  return [];
-}
-
-// Helper function to calculate price based on quantity and price rules
-function calculateItemPrice(
-  quantity: number,
-  priceRules: ConfigItem["priceRules"]
-): number {
-  if (!priceRules || priceRules.length === 0) return 0;
-
-  // Find applicable price rule based on quantity
-  const applicableRule = priceRules
-    .filter((rule) => {
-      if (rule.condition === "greater_than") {
-        return quantity > rule.minQuantity;
-      } else if (rule.condition === "greater_than_or_equal") {
-        return quantity >= rule.minQuantity;
-      }
-      return false;
-    })
-    .sort((a, b) => b.minQuantity - a.minQuantity)[0]; // Get the highest applicable rule
-
-  return applicableRule ? applicableRule.pricePerUnit * quantity : 0;
-}
-
-// Component for quantity selector
-function QuantitySelector({
-  value,
-  onChange,
-  min = 1,
-  max = 100,
-  label,
-}: {
+// Components
+const QuantityControl = ({ value, onChange, min = 1, max = 99 }: {
   value: number;
-  onChange: (value: number) => void;
+  onChange: (v: number) => void;
   min?: number;
   max?: number;
-  label: string;
-}) {
+}) => (
+  <div className={styles.quantityControl}>
+    <button
+      type="button"
+      onClick={() => onChange(Math.max(min, value - 1))}
+      disabled={value <= min}
+      className={styles.qtyBtn}
+    >
+      <FaMinus />
+    </button>
+    <span className={styles.qtyValue}>{value}</span>
+    <button
+      type="button"
+      onClick={() => onChange(Math.min(max, value + 1))}
+      disabled={value >= max}
+      className={styles.qtyBtn}
+    >
+      <FaPlus />
+    </button>
+  </div>
+);
+
+const ProductCard = ({ product, isSelected, onSelect, disabled }: {
+  product: ProductCustom;
+  isSelected: boolean;
+  onSelect: () => void;
+  disabled: boolean;
+}) => {
+  const availability = getProductAvailability(product);
+  const isOutOfStock = !availability.available;
+  
   return (
-    <div className={styles.quantitySelector}>
-      <label className={styles.quantityLabel}>{label}</label>
-      <div className={styles.quantityControls}>
-        <button
-          type="button"
-          className={styles.quantityBtn}
-          onClick={() => onChange(Math.max(min, value - 1))}
-          disabled={value <= min}
-        >
-          <FaMinus />
-        </button>
-        <span className={styles.quantityValue}>{value}</span>
-        <button
-          type="button"
-          className={styles.quantityBtn}
-          onClick={() => onChange(Math.min(max, value + 1))}
-          disabled={value >= max}
-        >
-          <FaPlus />
-        </button>
+    <div
+      className={`${styles.productCard} ${isSelected ? styles.selected : ""} ${(disabled || isOutOfStock) ? styles.disabled : ""}`}
+      onClick={() => !disabled && !isOutOfStock && onSelect()}
+    >
+      <div className={styles.cardImage}>
+        {product.imageUrl ? (
+          <img src={product.imageUrl} alt={product.name} />
+        ) : (
+          <div className={styles.noImage}><FaGift /></div>
+        )}
+        {isSelected && (
+          <div className={styles.selectedBadge}>
+            <FaCheck />
+          </div>
+        )}
+        {isOutOfStock && <div className={styles.outOfStockOverlay}>Hết hàng</div>}
+      </div>
+      <div className={styles.cardContent}>
+        <h4 className={styles.cardTitle}>{product.name}</h4>
+        <p className={styles.cardPrice}>{formatPrice(parseInt(product.price) || 0)}</p>
+        {!isOutOfStock && (
+          <span className={styles.stockInfo}>Còn {availability.stock}</span>
+        )}
       </div>
     </div>
   );
-}
+};
 
-// Multi-Item Selector Component - for products with multiple items (e.g., multiple LEGO figures)
-function MultiItemSelector({
-  numberOfItems,
-  selectedItem,
-  onItemSelect,
-  variantName,
-}: {
-  numberOfItems: number;
-  selectedItem: number;
-  onItemSelect: (itemIndex: number) => void;
-  variantName: string;
-}) {
-  if (numberOfItems <= 1) return null;
-
-  return (
-    <div className={styles.multiItemSelector}>
-      <h3 className={styles.multiItemTitle}>Chọn {variantName} để tùy chỉnh</h3>
-      <p className={styles.multiItemDescription}>
-        Bạn có {numberOfItems} {variantName.toLowerCase()}. Vui lòng chọn từng
-        cái để tùy chỉnh riêng.
-      </p>
-      <div className={styles.itemTabs}>
-        {Array.from({ length: numberOfItems }, (_, index) => {
-          const itemIndex = index + 1;
-          return (
-            <button
-              key={itemIndex}
-              className={`${styles.itemTab} ${
-                selectedItem === itemIndex ? styles.active : ""
-              }`}
-              onClick={() => onItemSelect(itemIndex)}
-            >
-              <div className={styles.itemTabContent}>
-                <span className={styles.itemNumber}>{itemIndex}</span>
-                <span className={styles.itemLabel}>
-                  {variantName} {itemIndex}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-// Tabs-based Category Selector Component - uses real server data with search and pagination
-function TabsCategoriesSelector({
-  variantCategoryRules = [],
-  selectedCategoryProducts,
-  onProductChange,
-  searchTerm,
-  onSearchChange,
-  currentPage,
-  onPageChange,
-  itemsPerPage,
-  currentItemIndex = 1,
-  isMultiItem = false,
-}: {
-  variantCategoryRules: VariantCategoryRule[];
-  selectedCategoryProducts: Record<
-    string,
-    Array<{ productCustomId: string; quantity: number }>
-  >;
-  onProductChange: (
-    categoryId: string,
-    productCustomId: string,
-    selected: boolean
-  ) => void;
-  searchTerm: string;
-  onSearchChange: (term: string) => void;
-  currentPage: Record<string, number>;
-  onPageChange: (categoryId: string, page: number) => void;
-  itemsPerPage: number;
-  currentItemIndex?: number;
-  isMultiItem?: boolean;
-}) {
-  const [categories, setCategories] = useState<Record<string, ProductCustom[]>>(
-    {}
-  );
-  const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState<string>("");
-  const [categoryNames, setCategoryNames] = useState<Record<string, string>>(
-    {}
-  );
-
-  useEffect(() => {
-    const fetchRealCategories = async () => {
-      try {
-        // Fetch all products from server
-        const response = await productCustomsService.getProductCustoms({
-          status: "active",
-          limit: 100, // Get more products to have enough data
-        });
-
-        const products = response.data || [];
-
-        // Group products by their actual category from server
-        const groupedCategories: Record<string, ProductCustom[]> = {};
-        const names: Record<string, string> = {};
-
-        products.forEach((product) => {
-          if (product.productCategory) {
-            const categoryId = product.productCategory.id;
-            const categoryName = product.productCategory.name;
-
-            if (!groupedCategories[categoryId]) {
-              groupedCategories[categoryId] = [];
-            }
-
-            groupedCategories[categoryId].push(product);
-            names[categoryId] = categoryName;
-          }
-        });
-
-        setCategories(groupedCategories);
-        setCategoryNames(names);
-
-        // Set first category as active tab
-        const firstCategoryId = Object.keys(groupedCategories)[0];
-        if (firstCategoryId) {
-          setActiveTab(firstCategoryId);
-        }
-      } catch (error) {
-        console.error("Failed to fetch categories:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchRealCategories();
-  }, []);
-
-  if (loading) {
-    return (
-      <div className={styles.categoriesLoading}>
-        <div className={styles.loadingSpinner}></div>
-        <p>Đang tải danh sách sản phẩm tùy chỉnh...</p>
-      </div>
-    );
-  }
-
-  const categoryIds = Object.keys(categories);
-
-  if (categoryIds.length === 0) {
-    return (
-      <div className={styles.noCategories}>
-        <FaGift className={styles.noCategoriesIcon} />
-        <p>Chưa có sản phẩm tùy chỉnh nào được phân loại.</p>
-      </div>
-    );
-  }
-
-  // Check if there are any out of stock products
-  const outOfStockCount = Object.values(categories)
-    .flat()
-    .filter((product) => {
-      const availability = getProductAvailability(product);
-      return !availability.available;
-    }).length;
-
-  return (
-    <div className={styles.modernCustomizationContainer}>
-      {isMultiItem && (
-        <div className={styles.multiItemIndicator}>
-          <span className={styles.currentItemBadge}>
-            Đang tùy chỉnh: Item {currentItemIndex}
-          </span>
-        </div>
-      )}
-
-      <div className={styles.customizationHeader}>
-        <h3 className={styles.sectionTitle}>
-          {isMultiItem
-            ? `Tùy chỉnh cho Item ${currentItemIndex}`
-            : "Chọn Sản Phẩm Tùy Chỉnh"}
-        </h3>
-        <p className={styles.sectionDescription}>
-          Chọn từ các danh mục sản phẩm tùy chỉnh có sẵn. Những mục có dấu * là
-          bắt buộc phải chọn.
-        </p>
-      </div>
-
-      {/* Out of stock warning */}
-      {outOfStockCount > 0 && (
-        <div className={styles.stockWarning}>
-          <FaTimes className={styles.warningIcon} />
-          <span>
-            Có {outOfStockCount} sản phẩm tạm hết hàng. Những sản phẩm này sẽ
-            được đánh dấu và không thể chọn.
-          </span>
-        </div>
-      )}
-
-      {/* Category Tabs */}
-      <div className={styles.categoryTabs}>
-        {categoryIds.map((categoryId) => {
-          const categoryRule = variantCategoryRules.find(
-            (rule) => rule.categoryId === categoryId
-          );
-          const isRequired = categoryRule?.isRequired || false;
-          const selectedProducts = selectedCategoryProducts[categoryId] || [];
-          const selectedCount = selectedProducts.length;
-          const maxSelections = categoryRule?.maxSelections || 999;
-
-          return (
-            <button
-              key={categoryId}
-              className={`${styles.categoryTab} ${
-                activeTab === categoryId ? styles.active : ""
-              } ${isRequired ? styles.required : styles.optional}`}
-              onClick={() => setActiveTab(categoryId)}
-            >
-              <div className={styles.tabContent}>
-                <span className={styles.tabName}>
-                  {categoryNames[categoryId]}
-                  {isRequired && <FaCheck className={styles.requiredIcon} />}
-                </span>
-                <span className={styles.tabBadge}>
-                  {selectedCount}/{maxSelections}
-                </span>
-              </div>
-            </button>
-          );
-        })}
-      </div>
-
-      {/* Active Category Content */}
-      {activeTab && (
-        <div className={styles.activeTabContent}>
-          {(() => {
-            const categoryRule = variantCategoryRules.find(
-              (rule) => rule.categoryId === activeTab
-            );
-            const isRequired = categoryRule?.isRequired || false;
-            const maxSelections = categoryRule?.maxSelections || 999;
-            const selectedProducts = selectedCategoryProducts[activeTab] || [];
-            const selectedCount = selectedProducts.length;
-
-            // Filter products based on search term
-            const allProducts = categories[activeTab] || [];
-            const filteredProducts = allProducts.filter(
-              (product) =>
-                product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                (product.description &&
-                  product.description
-                    .toLowerCase()
-                    .includes(searchTerm.toLowerCase()))
-            );
-
-            // Pagination
-            const currentPageForCategory = currentPage[activeTab] || 1;
-            const startIndex = (currentPageForCategory - 1) * itemsPerPage;
-            const endIndex = startIndex + itemsPerPage;
-            const paginatedProducts = filteredProducts.slice(
-              startIndex,
-              endIndex
-            );
-            const totalPages = Math.ceil(
-              filteredProducts.length / itemsPerPage
-            );
-
-            return (
-              <>
-                {/* Category Info */}
-                <div className={styles.categoryInfo}>
-                  <h4 className={styles.categoryName}>
-                    {categoryNames[activeTab]}
-                    {isRequired && (
-                      <span className={styles.requiredLabel}>(Bắt buộc)</span>
-                    )}
-                  </h4>
-                  <p className={styles.categoryDescription}>
-                    {isRequired
-                      ? `Bạn cần chọn ít nhất 1 sản phẩm từ danh mục này (tối đa ${maxSelections} sản phẩm)`
-                      : `Tùy chọn - có thể chọn tối đa ${maxSelections} sản phẩm từ danh mục này`}
-                  </p>
-                  {selectedCount > 0 && (
-                    <div className={styles.selectionSummary}>
-                      <FaCheck /> Đã chọn {selectedCount} sản phẩm:{" "}
-                      {selectedProducts
-                        .map((p) => {
-                          const product = categories[activeTab]?.find(
-                            (prod) => prod.id === p.productCustomId
-                          );
-                          return product?.name || "Sản phẩm";
-                        })
-                        .join(", ")}
-                    </div>
-                  )}
-                </div>
-
-                {/* Search Bar */}
-                <div className={styles.searchContainer}>
-                  <input
-                    type="text"
-                    placeholder={`Tìm kiếm trong ${categoryNames[activeTab]}...`}
-                    value={searchTerm}
-                    onChange={(e) => onSearchChange(e.target.value)}
-                    className={styles.searchInput}
-                  />
-                  <div className={styles.searchStats}>
-                    Hiển thị {paginatedProducts.length} /{" "}
-                    {filteredProducts.length} sản phẩm
-                  </div>
-                </div>
-
-                {/* Products Grid */}
-                <div className={styles.tabProductsGrid}>
-                  {paginatedProducts.length > 0 ? (
-                    paginatedProducts.map((product) => {
-                      const isSelected = selectedProducts.some(
-                        (p) => p.productCustomId === product.id
-                      );
-                      const canSelectByLimit =
-                        !isSelected && selectedCount < maxSelections;
-                      const availability = canSelectProduct(product, 1);
-                      const canSelect =
-                        canSelectByLimit && availability.canSelect;
-
-                      return (
-                        <div
-                          key={product.id}
-                          className={`${styles.tabProductCard} ${
-                            isSelected ? styles.selected : ""
-                          } ${
-                            !canSelect && !isSelected ? styles.disabled : ""
-                          }`}
-                          onClick={() => {
-                            if (isSelected || canSelect) {
-                              onProductChange(
-                                activeTab,
-                                product.id,
-                                !isSelected
-                              );
-                            }
-                          }}
-                          title={
-                            !availability.canSelect ? availability.message : ""
-                          }
-                        >
-                          <div className={styles.productImageContainer}>
-                            {product.imageUrl ? (
-                              <img
-                                src={product.imageUrl}
-                                alt={product.name}
-                                className={styles.productImage}
-                              />
-                            ) : (
-                              <div className={styles.noImage}>
-                                <FaGift />
-                              </div>
-                            )}
-
-                            <div className={styles.productOverlay}>
-                              <div
-                                className={`${styles.selectionIndicator} ${
-                                  isSelected ? styles.selected : ""
-                                }`}
-                              >
-                                {isSelected ? <FaCheck /> : <FaPlus />}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className={styles.productDetails}>
-                            <h5 className={styles.productName}>
-                              {product.name}
-                            </h5>
-                            <p className={styles.productPrice}>
-                              {formatPrice(parseInt(product.price) || 0)}
-                            </p>
-
-                            {/* Stock Status Display */}
-                            <div className={styles.stockStatus}>
-                              {availability.available ? (
-                                <span
-                                  className={`${styles.stockBadge} ${styles.inStock}`}
-                                >
-                                  ✓ Còn hàng ({availability.stock})
-                                </span>
-                              ) : (
-                                <span
-                                  className={`${styles.stockBadge} ${styles.outOfStock}`}
-                                >
-                                  ✗ Hết hàng
-                                </span>
-                              )}
-                            </div>
-
-                            {product.description && (
-                              <p className={styles.productDescription}>
-                                {product.description.length > 60
-                                  ? product.description.substring(0, 60) + "..."
-                                  : product.description}
-                              </p>
-                            )}
-                          </div>
-                        </div>
-                      );
-                    })
-                  ) : (
-                    <div className={styles.noResults}>
-                      <p>
-                        Không tìm thấy sản phẩm phù hợp với từ khóa "
-                        {searchTerm}"
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                {/* Pagination */}
-                {totalPages > 1 && (
-                  <div className={styles.pagination}>
-                    <button
-                      className={`${styles.paginationBtn} ${
-                        currentPageForCategory <= 1 ? styles.disabled : ""
-                      }`}
-                      onClick={() =>
-                        onPageChange(activeTab, currentPageForCategory - 1)
-                      }
-                      disabled={currentPageForCategory <= 1}
-                    >
-                      ← Trước
-                    </button>
-
-                    <div className={styles.paginationInfo}>
-                      <span>
-                        Trang {currentPageForCategory} / {totalPages}
-                      </span>
-                    </div>
-
-                    <button
-                      className={`${styles.paginationBtn} ${
-                        currentPageForCategory >= totalPages
-                          ? styles.disabled
-                          : ""
-                      }`}
-                      onClick={() =>
-                        onPageChange(activeTab, currentPageForCategory + 1)
-                      }
-                      disabled={currentPageForCategory >= totalPages}
-                    >
-                      Tiếp →
-                    </button>
-                  </div>
-                )}
-              </>
-            );
-          })()}
-        </div>
-      )}
-    </div>
-  );
-}
-
+// Main Component
 export default function ProductCustomizePage() {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const productId = searchParams.get("productId") || "";
   const variantId = searchParams.get("variantId") || "";
 
-  const {
-    data: product,
-    isLoading,
-    error,
-  } = useProduct(productId, Boolean(productId));
+  const { data: product, isLoading, error } = useProduct(productId, Boolean(productId));
+  const selectedVariant = product?.productVariants?.find((v) => v.id === variantId);
 
-  const selectedVariant = product?.productVariants?.find(
-    (v) => v.id === variantId
-  );
-
-  // State for selected options
-  const [selectedOptions, setSelectedOptions] = useState<
-    Array<{ id: string; price: number }>
-  >([]);
-
-  // State for customization
-  const [customQuantities, setCustomQuantities] = useState<
-    Record<string, number>
-  >({});
-  const [selectedCategoryProducts, setSelectedCategoryProducts] = useState<
-    Record<string, Array<{ productCustomId: string; quantity: number }>>
-  >({});
-  // State for custom products prices and details
-  const [customProductsPrices, setCustomProductsPrices] = useState<
-    Record<string, number>
-  >({});
-  const [customProductsDetails, setCustomProductsDetails] = useState<
-    Record<string, ProductCustom>
-  >({});
-
-  // State for validation and UI improvements
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
-  const [showValidationModal, setShowValidationModal] = useState(false);
+  // States
+  const [selectedOptions, setSelectedOptions] = useState<Array<{ id: string; price: number }>>([]);
+  const [customQuantities, setCustomQuantities] = useState<Record<string, number>>({});
+  const [selectedProducts, setSelectedProducts] = useState<Record<string, Array<{ productCustomId: string; quantity: number }>>>({});
+  const [productPrices, setProductPrices] = useState<Record<string, number>>({});
+  const [productDetails, setProductDetails] = useState<Record<string, ProductCustom>>({});
+  const [hasBackground, setHasBackground] = useState(false);
+  const [backgroundLoading, setBackgroundLoading] = useState(false);
+  const [activeCategory, setActiveCategory] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [currentPage, setCurrentPage] = useState<Record<string, number>>({});
-  const [itemsPerPage] = useState(8);
+  const [categoryProducts, setCategoryProducts] = useState<Record<string, ProductCustom[]>>({});
+  const [categoryNames, setCategoryNames] = useState<Record<string, string>>({});
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [showValidation, setShowValidation] = useState(false);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
 
-  // State for multi-item customization (e.g., multiple LEGO figures)
-  const [selectedItemForCustomization, setSelectedItemForCustomization] =
-    useState<number>(1);
-  const [multiItemCustomizations, setMultiItemCustomizations] = useState<
-    Record<
-      number,
-      Record<string, Array<{ productCustomId: string; quantity: number }>>
-    >
-  >({});
-
-  // State for background capability detection
-  const [hasBackground, setHasBackground] = useState<boolean>(false);
-  const [backgroundLoading, setBackgroundLoading] = useState<boolean>(false);
-
-  // Extract base quantity from config to determine number of items to customize
-  const getNumberOfItems = () => {
-    if (selectedVariant?.config && typeof selectedVariant.config === "object") {
-      const config = selectedVariant.config as ConfigData;
-      if (config.items && config.items.length > 0) {
-        const mainItem = config.items.find((item) => item.isActive);
-        if (mainItem) {
-          const currentQuantity =
-            customQuantities[mainItem.id] || mainItem.baseQuantity;
-          return Math.max(1, currentQuantity);
-        }
-      }
-    }
-    return 1;
-  };
-
-  const numberOfItems = getNumberOfItems();
-
-  // Function to calculate category products total price
-  const calculateCategoryProductsPrice = () => {
-    let total = 0;
-    Object.values(selectedCategoryProducts)
-      .flat()
-      .forEach((selection) => {
-        const productPrice =
-          customProductsPrices[selection.productCustomId] || 0;
-        total += productPrice * selection.quantity;
-      });
-    return total;
-  };
-
-  // Effect to fetch prices and details when selected products change
+  // Load category products
   useEffect(() => {
-    const fetchCustomProductsData = async () => {
-      const allSelectedProducts = Object.values(
-        selectedCategoryProducts
-      ).flat();
-      const uniqueProductIds = [
-        ...new Set(allSelectedProducts.map((p) => p.productCustomId)),
-      ];
+    const fetchProducts = async () => {
+      try {
+        const response = await productCustomsService.getProductCustoms({ status: "active", limit: 100 });
+        const products = response.data || [];
+        const grouped: Record<string, ProductCustom[]> = {};
+        const names: Record<string, string> = {};
 
-      // Only fetch data for products we don't have yet
-      const missingDataIds = uniqueProductIds.filter(
-        (id) => !(id in customProductsPrices)
-      );
-
-      if (missingDataIds.length > 0) {
-        const dataPromises = missingDataIds.map(async (productId) => {
-          try {
-            const product = await productCustomsService.getProductCustomById(
-              productId
-            );
-            return {
-              id: productId,
-              price: parseInt(product.price) || 0,
-              product: product,
-            };
-          } catch (error) {
-            console.error(
-              `Failed to fetch data for product ${productId}:`,
-              error
-            );
-            return {
-              id: productId,
-              price: 0,
-              product: null,
-            };
+        products.forEach((p) => {
+          if (p.productCategory) {
+            const catId = p.productCategory.id;
+            if (!grouped[catId]) grouped[catId] = [];
+            grouped[catId].push(p);
+            names[catId] = p.productCategory.name;
           }
         });
 
-        const results = await Promise.all(dataPromises);
-
-        // Update both prices and details
-        const pricesMap = results.reduce((acc, { id, price }) => {
-          acc[id] = price;
-          return acc;
-        }, {} as Record<string, number>);
-
-        const detailsMap = results.reduce((acc, { id, product }) => {
-          if (product) {
-            acc[id] = product;
-          }
-          return acc;
-        }, {} as Record<string, ProductCustom>);
-
-        setCustomProductsPrices((prev) => ({ ...prev, ...pricesMap }));
-        setCustomProductsDetails((prev) => ({ ...prev, ...detailsMap }));
-      }
-    };
-
-    fetchCustomProductsData();
-  }, [selectedCategoryProducts, customProductsPrices]);
-
-  // Effect to check background capability when product changes
-  useEffect(() => {
-    const checkBackgroundCapability = async () => {
-      if (product?.id) {
-        setBackgroundLoading(true);
-        try {
-          const backgroundCapability = await checkProductHasBackground(
-            product.id
-          );
-          setHasBackground(backgroundCapability);
-        } catch (error) {
-          console.error("Failed to check background capability:", error);
-          setHasBackground(false);
-        } finally {
-          setBackgroundLoading(false);
+        setCategoryProducts(grouped);
+        setCategoryNames(names);
+        if (Object.keys(grouped).length > 0) {
+          setActiveCategory(Object.keys(grouped)[0]);
         }
+      } catch (err) {
+        console.error("Failed to fetch products:", err);
+      } finally {
+        setLoadingProducts(false);
       }
     };
+    fetchProducts();
+  }, []);
 
-    checkBackgroundCapability();
+  // Check background capability
+  useEffect(() => {
+    if (product?.id) {
+      setBackgroundLoading(true);
+      checkProductHasBackground(product.id)
+        .then(setHasBackground)
+        .catch(() => setHasBackground(false))
+        .finally(() => setBackgroundLoading(false));
+    }
   }, [product?.id]);
 
-  // Calculate customization price based on config
-  const customizationPrice =
-    selectedVariant?.config && typeof selectedVariant.config === "object"
-      ? (() => {
-          const config = selectedVariant.config as ConfigData;
-          let total = 0;
+  // Fetch prices for selected products
+  useEffect(() => {
+    const fetchPrices = async () => {
+      const allSelected = Object.values(selectedProducts).flat();
+      const missing = allSelected.filter((p) => !(p.productCustomId in productPrices));
+      
+      if (missing.length > 0) {
+        const results = await Promise.all(
+          missing.map(async (p) => {
+            try {
+              const prod = await productCustomsService.getProductCustomById(p.productCustomId);
+              return { id: p.productCustomId, price: parseInt(prod.price) || 0, product: prod };
+            } catch {
+              return { id: p.productCustomId, price: 0, product: null };
+            }
+          })
+        );
+        
+        const prices: Record<string, number> = {};
+        const details: Record<string, ProductCustom> = {};
+        results.forEach(({ id, price, product }) => {
+          prices[id] = price;
+          if (product) details[id] = product;
+        });
+        
+        setProductPrices((prev) => ({ ...prev, ...prices }));
+        setProductDetails((prev) => ({ ...prev, ...details }));
+      }
+    };
+    fetchPrices();
+  }, [selectedProducts, productPrices]);
 
-          // Calculate price for custom items based on quantities and price rules
-          config.items?.forEach((item) => {
-            const quantity = customQuantities[item.id] || item.baseQuantity;
-            const itemPrice = calculateItemPrice(quantity, item.priceRules);
-            total += itemPrice;
-          });
-
-          // Add price for selected category products
-          total += calculateCategoryProductsPrice();
-
-          return total;
-        })()
-      : 0;
-
-  // Validation function for required categories
-  const validateRequiredSelections = (): string[] => {
-    const errors: string[] = [];
-
+  // Config data
+  const config = useMemo(() => {
     if (selectedVariant?.config && typeof selectedVariant.config === "object") {
-      const config = selectedVariant.config as ConfigData;
-
-      // Check required categories
-      config.variantCategoryRules?.forEach((rule) => {
-        if (rule.isRequired) {
-          const selectedProducts =
-            selectedCategoryProducts[rule.categoryId] || [];
-          if (selectedProducts.length === 0) {
-            errors.push(
-              `Bạn cần chọn ít nhất 1 sản phẩm từ danh mục "${rule.categoryName}"`
-            );
-          }
-        }
-      });
+      return selectedVariant.config as ConfigData;
     }
+    return null;
+  }, [selectedVariant?.config]);
 
+  // Filter products by search
+  const filteredProducts = useMemo(() => {
+    const products = categoryProducts[activeCategory] || [];
+    if (!searchTerm) return products;
+    return products.filter((p) =>
+      p.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      p.description?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+  }, [categoryProducts, activeCategory, searchTerm]);
+
+  // Calculate prices
+  const customizationPrice = useMemo(() => {
+    let total = 0;
+    config?.items?.forEach((item) => {
+      const qty = customQuantities[item.id] || item.baseQuantity;
+      total += calculateItemPrice(qty, item.priceRules);
+    });
+    Object.values(selectedProducts).flat().forEach((sel) => {
+      total += (productPrices[sel.productCustomId] || 0) * sel.quantity;
+    });
+    return total;
+  }, [config, customQuantities, selectedProducts, productPrices]);
+
+  const optionsPrice = useMemo(() => 
+    selectedOptions.reduce((sum, opt) => sum + opt.price, 0), 
+    [selectedOptions]
+  );
+
+  const totalPrice = (Number(selectedVariant?.price) || 0) + optionsPrice + customizationPrice;
+
+  // Handlers
+  const handleProductSelect = (categoryId: string, productId: string) => {
+    const rule = config?.variantCategoryRules?.find((r) => r.categoryId === categoryId);
+    const maxSelections = rule?.maxSelections || 999;
+    
+    setSelectedProducts((prev) => {
+      const current = prev[categoryId] || [];
+      const exists = current.some((p) => p.productCustomId === productId);
+      
+      if (exists) {
+        return { ...prev, [categoryId]: current.filter((p) => p.productCustomId !== productId) };
+      } else if (current.length < maxSelections) {
+        return { ...prev, [categoryId]: [...current, { productCustomId: productId, quantity: 1 }] };
+      }
+      return prev;
+    });
+  };
+
+  const handleOptionToggle = (optionId: string, price: number) => {
+    setSelectedOptions((prev) => {
+      const exists = prev.some((o) => o.id === optionId);
+      return exists ? prev.filter((o) => o.id !== optionId) : [...prev, { id: optionId, price }];
+    });
+  };
+
+  const validateSelections = (): string[] => {
+    const errors: string[] = [];
+    config?.variantCategoryRules?.forEach((rule) => {
+      if (rule.isRequired) {
+        const selected = selectedProducts[rule.categoryId] || [];
+        if (selected.length === 0) {
+          errors.push(`Vui lòng chọn ít nhất 1 sản phẩm từ "${rule.categoryName}"`);
+        }
+      }
+    });
     return errors;
   };
 
-  // Calculate total price including base price, options, and customization
-  const totalPrice = selectedVariant
-    ? Number(selectedVariant.price) +
-      selectedOptions.reduce((sum, option) => sum + option.price, 0) +
-      customizationPrice
-    : 0;
-
-  // Get background customization status from API-based detection
-  const hasBackgroundCustomization = () => {
-    return hasBackground && !backgroundLoading;
-  };
-
-  // Handle continue to background customization
-  const handleContinueToBackground = () => {
-    const errors = validateRequiredSelections();
-
+  const handleContinue = () => {
+    const errors = validateSelections();
     if (errors.length > 0) {
       setValidationErrors(errors);
-      setShowValidationModal(true);
+      setShowValidation(true);
       return;
     }
 
-    // Prepare customization data to pass to background customize page
-    const customizationData = {
-      productId,
-      variantId,
-      selectedOptions,
-      customQuantities,
-      ...(numberOfItems > 1
-        ? { multiItemCustomizations }
-        : { selectedCategoryProducts }),
-      totalPrice,
-    };
-
-    // Navigate to background customization page with data
-    const encodedData = encodeURIComponent(JSON.stringify(customizationData));
-    navigate(`/background-customize?data=${encodedData}`);
-  };
-
-  // Handle add to cart with validation
-  const handleAddToCart = () => {
-    const errors = validateRequiredSelections();
-
-    if (errors.length > 0) {
-      setValidationErrors(errors);
-      setShowValidationModal(true);
-      return;
+    if (hasBackground) {
+      const data = {
+        productId,
+        variantId,
+        selectedOptions,
+        customQuantities,
+        selectedCategoryProducts: selectedProducts,
+        totalPrice,
+      };
+      navigate(`/background-customize?data=${encodeURIComponent(JSON.stringify(data))}`);
+    } else {
+      // Add to cart logic
+      alert("Đã thêm vào giỏ hàng!");
     }
-
-    // TODO: Implement actual add to cart logic
-    // Adding to cart
-
-    alert("Sản phẩm đã được thêm vào giỏ hàng!");
   };
 
+  // Render states
   if (!productId || !variantId) {
     return (
-      <div className={styles.errorState}>
-        <div className="site-inner">
-          <p>Thiếu thông tin sản phẩm hoặc biến thể.</p>
+      <div className={styles.errorPage}>
+        <div className={styles.errorContent}>
+          <FaInfoCircle className={styles.errorIcon} />
+          <h2>Thiếu thông tin sản phẩm</h2>
+          <p>Vui lòng chọn sản phẩm từ trang chủ</p>
+          <Link to="/" className={styles.backBtn}><FaArrowLeft /> Về trang chủ</Link>
         </div>
       </div>
     );
@@ -1180,473 +406,277 @@ export default function ProductCustomizePage() {
 
   if (isLoading) {
     return (
-      <div className={styles.loadingState}>
-        <div className="site-inner">
-          <div className={styles.loadingSpinner}></div>
-          <p>Đang tải thông tin tùy chỉnh...</p>
+      <div className={styles.loadingPage}>
+        <div className={styles.loader}></div>
+        <p>Đang tải thông tin sản phẩm...</p>
+      </div>
+    );
+  }
+
+  if (error || !product || !selectedVariant) {
+    return (
+      <div className={styles.errorPage}>
+        <div className={styles.errorContent}>
+          <FaTimes className={styles.errorIcon} />
+          <h2>Không tìm thấy sản phẩm</h2>
+          <p>Sản phẩm không tồn tại hoặc đã bị xóa</p>
+          <Link to="/" className={styles.backBtn}><FaArrowLeft /> Về trang chủ</Link>
         </div>
       </div>
     );
   }
 
-  if (error || !product) {
-    return (
-      <div className={styles.errorState}>
-        <div className="site-inner">
-          <p>Không thể tải thông tin sản phẩm.</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!selectedVariant) {
-    return (
-      <div className={styles.errorState}>
-        <div className="site-inner">
-          <p>Không tìm thấy biến thể đã chọn.</p>
-        </div>
-      </div>
-    );
-  }
+  const endowData = parseEndowData(selectedVariant.endow);
+  const optionData = parseOptionData(selectedVariant.option);
+  const categoryIds = Object.keys(categoryProducts);
 
   return (
     <div className={styles.customizePage}>
-      <div className="site-inner">
-        {/* Header */}
-        <div className={styles.pageHeader}>
-          <h1 className={styles.pageTitle}>Tùy Chỉnh Sản Phẩm</h1>
-          <div className={styles.breadcrumb}>
-            <span>Trang chủ</span>
-            <span className={styles.separator}>›</span>
-            <span>{product.collection?.name}</span>
-            <span className={styles.separator}>›</span>
-            <span>{product.name}</span>
-            <span className={styles.separator}>›</span>
-            <span className={styles.current}>Tùy chỉnh</span>
+      {/* Header */}
+      <header className={styles.pageHeader}>
+        <div className={styles.headerInner}>
+          <button onClick={() => navigate(-1)} className={styles.backButton}>
+            <FaArrowLeft />
+          </button>
+          <div className={styles.headerTitle}>
+            <h1>Tùy chỉnh sản phẩm</h1>
+            <p>{product.name} - {selectedVariant.name}</p>
           </div>
         </div>
+      </header>
 
-        <div className={styles.customizeContent}>
-          {/* Product Summary */}
-          <div className={styles.productSummary}>
-            <h2>Thông Tin Sản Phẩm</h2>
-            <div className={styles.summaryCard}>
-              <div className={styles.productInfo}>
-                <h3>{product.name}</h3>
-                <p className={styles.collection}>{product.collection?.name}</p>
-              </div>
+      <main className={styles.mainContent}>
+        {/* Left: Product Info & Options */}
+        <section className={styles.leftSection}>
+          {/* Product Summary Card */}
+          <div className={styles.summaryCard}>
+            <div className={styles.summaryHeader}>
+              <h2>{selectedVariant.name}</h2>
+              <span className={styles.basePrice}>{formatPrice(Number(selectedVariant.price))}</span>
             </div>
-
-            {/* Variant Details */}
-            <div className={styles.variantDetails}>
-              <h3>Thông Tin Chi Tiết</h3>
-              <div className={styles.detailsGrid}>
-                <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>Tên sản phẩm:</span>
-                  <span className={styles.detailValue}>
-                    {selectedVariant.name}
-                  </span>
-                </div>
-
-                <div className={styles.detailItem}>
-                  <span className={styles.detailLabel}>Giá:</span>
-                  <span className={styles.detailValue}>
-                    {formatPrice(Number(selectedVariant.price))}
-                  </span>
-                </div>
-
-                {selectedVariant.description && (
-                  <div className={styles.detailItem}>
-                    <span className={styles.detailLabel}>Mô tả:</span>
-                    <div className={styles.detailValue}>
-                      {selectedVariant.description
-                        .split("\n")
-                        .map((line, index) => (
-                          <div key={index}>{line}</div>
-                        ))}
-                    </div>
-                  </div>
-                )}
-
-                {selectedVariant.endow &&
-                  (() => {
-                    const endowData = parseEndowData(selectedVariant.endow);
-                    const hasEndowItems =
-                      endowData.items.length > 0 ||
-                      endowData.customProducts.length > 0;
-
-                    return hasEndowItems ? (
-                      <div className={styles.detailItem}>
-                        <span className={styles.detailLabel}>
-                          Ưu đãi đặc biệt:
-                        </span>
-                        <div className={styles.detailValue}>
-                          {/* Check endow products availability */}
-                          <EndowAvailabilityChecker endowData={endowData} />
-
-                          <div className={styles.endowList}>
-                            {/* Display text items */}
-                            {endowData.items.map((content, index) => (
-                              <div
-                                key={`item-${index}`}
-                                className={styles.endowItem}
-                              >
-                                <FaGift className={styles.icon} />
-                                <span>{content}</span>
-                              </div>
-                            ))}
-
-                            {/* Display custom products */}
-                            {endowData.customProducts.map((cp, index) => (
-                              <div
-                                key={`custom-${index}`}
-                                className={styles.endowItem}
-                              >
-                                <span className={styles.icon}>�</span>
-                                <span>
-                                  <CustomProductItem
-                                    productCustomId={cp.productCustomId}
-                                  />
-                                  {cp.quantity > 1 && (
-                                    <span> x{cp.quantity}</span>
-                                  )}
-                                </span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    ) : null;
-                  })()}
-
-                {selectedVariant.option && (
-                  <div className={styles.detailItem}>
-                    <span className={styles.detailLabel}>
-                      Options mua thêm:
-                    </span>
-                    <div className={styles.detailValue}>
-                      <div className={styles.optionsList}>
-                        {parseOptionData(selectedVariant.option).map(
-                          (option, index) => {
-                            const optionId = `option-${index}`;
-                            const isSelected = selectedOptions.some(
-                              (opt) => opt.id === optionId
-                            );
-
-                            return (
-                              <div
-                                key={index}
-                                className={`${styles.optionItem} ${
-                                  isSelected ? styles.selected : ""
-                                }`}
-                                onClick={() => {
-                                  if (isSelected) {
-                                    setSelectedOptions((prev) =>
-                                      prev.filter((opt) => opt.id !== optionId)
-                                    );
-                                  } else {
-                                    setSelectedOptions((prev) => [
-                                      ...prev,
-                                      { id: optionId, price: option.price },
-                                    ]);
-                                  }
-                                }}
-                              >
-                                <div className={styles.optionCheckbox}>
-                                  <input
-                                    type="checkbox"
-                                    checked={isSelected}
-                                    onChange={() => {}} // Handled by parent onClick
-                                  />
-                                </div>
-                                <div className={styles.optionContent}>
-                                  <div className={styles.optionHeader}>
-                                    <span className={styles.optionName}>
-                                      {option.name}
-                                    </span>
-                                    {option.price > 0 && (
-                                      <span className={styles.optionPrice}>
-                                        +{formatPrice(option.price)}
-                                      </span>
-                                    )}
-                                  </div>
-                                  {option.description && (
-                                    <div className={styles.optionDescription}>
-                                      {option.description}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          }
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Dynamic Customization Based on Config */}
-          {selectedVariant?.config &&
-            typeof selectedVariant.config === "object" &&
-            (() => {
-              const config = selectedVariant.config as ConfigData;
-
-              return (
-                <div className={styles.customizeSection}>
-                  <h2>Tùy Chỉnh Sản Phẩm</h2>
-
-                  {/* Custom Items - Quantity Selection */}
-                  {config.items && config.items.length > 0 && (
-                    <div className={styles.customItemsSection}>
-                      <h3>Số Lượng Sản Phẩm</h3>
-                      {config.items.map((item) => {
-                        const currentQuantity =
-                          customQuantities[item.id] || item.baseQuantity;
-                        const itemPrice = calculateItemPrice(
-                          currentQuantity,
-                          item.priceRules
-                        );
-
-                        return (
-                          <div key={item.id} className={styles.itemConfig}>
-                            <div className={styles.itemHeader}>
-                              <h4>{item.name}</h4>
-                              {itemPrice > 0 && (
-                                <span className={styles.itemPrice}>
-                                  {formatPrice(itemPrice)}
-                                </span>
-                              )}
-                            </div>
-
-                            {config.allowCustomQuantity ? (
-                              <QuantitySelector
-                                value={currentQuantity}
-                                onChange={(value) =>
-                                  setCustomQuantities((prev) => ({
-                                    ...prev,
-                                    [item.id]: value,
-                                  }))
-                                }
-                                min={config.minCustomQuantity}
-                                max={config.maxCustomQuantity}
-                                label={`Số lượng ${item.name.toLowerCase()}`}
-                              />
-                            ) : (
-                              <div className={styles.fixedQuantity}>
-                                <span>
-                                  Số lượng cố định: {item.baseQuantity}
-                                </span>
-                              </div>
-                            )}
-
-                            {/* Show price rules */}
-                            {item.priceRules && item.priceRules.length > 0 && (
-                              <div className={styles.priceRules}>
-                                <p className={styles.priceRulesTitle}>
-                                  Bảng giá:
-                                </p>
-                                {item.priceRules.map((rule) => (
-                                  <p key={rule.id} className={styles.priceRule}>
-                                    {rule.description}
-                                  </p>
-                                ))}
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-
-                  {/* All Categories Product Selection - Always Show */}
-                  <div className={styles.categoryRulesSection}>
-                    <TabsCategoriesSelector
-                      variantCategoryRules={config.variantCategoryRules || []}
-                      selectedCategoryProducts={selectedCategoryProducts}
-                      searchTerm={searchTerm}
-                      onSearchChange={setSearchTerm}
-                      currentPage={currentPage}
-                      onPageChange={(categoryId: string, page: number) => {
-                        setCurrentPage((prev) => ({
-                          ...prev,
-                          [categoryId]: page,
-                        }));
-                      }}
-                      itemsPerPage={itemsPerPage}
-                      onProductChange={(
-                        categoryId: string,
-                        productCustomId: string,
-                        selected: boolean
-                      ) => {
-                        setSelectedCategoryProducts((prev) => {
-                          const current = prev[categoryId] || [];
-                          if (selected) {
-                            return {
-                              ...prev,
-                              [categoryId]: [
-                                ...current,
-                                { productCustomId, quantity: 1 },
-                              ],
-                            };
-                          } else {
-                            return {
-                              ...prev,
-                              [categoryId]: current.filter(
-                                (p) => p.productCustomId !== productCustomId
-                              ),
-                            };
-                          }
-                        });
-                      }}
-                    />
-                  </div>
-                </div>
-              );
-            })()}
-
-          {/* Price Summary */}
-          <div className={styles.priceSummary}>
-            <div className={styles.priceRow}>
-              <span>Giá sản phẩm gốc:</span>
-              <span>{formatPrice(Number(selectedVariant.price))}</span>
-            </div>
-
-            {/* Show selected options pricing */}
-            {selectedOptions.length > 0 &&
-              selectedOptions.map((selectedOption) => {
-                const optionIndex = parseInt(selectedOption.id.split("-")[1]);
-                const optionData = parseOptionData(selectedVariant.option)[
-                  optionIndex
-                ];
-                return (
-                  <div key={selectedOption.id} className={styles.priceRow}>
-                    <span>+ {optionData?.name || "Option"}:</span>
-                    <span>{formatPrice(selectedOption.price)}</span>
-                  </div>
-                );
-              })}
-
-            {/* Show customization pricing if any */}
-            {customizationPrice > 0 && (
-              <div className={styles.priceRow}>
-                <span>+ Tùy chỉnh sản phẩm:</span>
-                <span>{formatPrice(customizationPrice)}</span>
-              </div>
+            
+            {selectedVariant.description && (
+              <p className={styles.summaryDesc}>{selectedVariant.description}</p>
             )}
 
-            {/* Show custom products pricing details */}
-            {Object.values(selectedCategoryProducts).flat().length > 0 && (
-              <div className={styles.customProductsBreakdown}>
-                {Object.entries(selectedCategoryProducts).map(
-                  ([categoryId, products]) => {
-                    if (products.length === 0) return null;
-                    return products.map((selection) => {
-                      const productPrice =
-                        customProductsPrices[selection.productCustomId] || 0;
-                      const productDetails =
-                        customProductsDetails[selection.productCustomId];
-                      const totalProductPrice =
-                        productPrice * selection.quantity;
-
-                      const productName =
-                        productDetails?.name ||
-                        `Sản phẩm ID: ${selection.productCustomId}`;
-
-                      return (
-                        <div
-                          key={`${categoryId}-${selection.productCustomId}`}
-                          className={styles.priceRow}
-                        >
-                          <span>
-                            + {productName} (x{selection.quantity}):
-                          </span>
-                          <span>{formatPrice(totalProductPrice)}</span>
-                        </div>
-                      );
-                    });
-                  }
-                )}
+            {/* Endow Items */}
+            {(endowData.items.length > 0 || endowData.customProducts.length > 0) && (
+              <div className={styles.endowSection}>
+                <h3><FaGift /> Quà tặng kèm</h3>
+                <ul className={styles.endowList}>
+                  {endowData.items.map((item, i) => (
+                    <li key={i}>{item}</li>
+                  ))}
+                </ul>
               </div>
-            )}
-
-            {/* Total price */}
-            <div className={styles.priceTotal}>
-              <span>Tổng cộng:</span>
-              <span>{formatPrice(totalPrice)}</span>
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className={styles.actionSection}>
-            <button className={styles.previewBtn}>
-              <FaEye className={styles.btnIcon} />
-              Xem Trước
-            </button>
-
-            {backgroundLoading ? (
-              <button className={styles.loadingBtn} disabled>
-                <FaClock className={styles.btnIcon} />
-                Đang kiểm tra...
-              </button>
-            ) : hasBackgroundCustomization() ? (
-              <button
-                className={styles.continueBackgroundBtn}
-                onClick={handleContinueToBackground}
-              >
-                <FaPalette className={styles.btnIcon} />
-                Tiếp tục tùy chỉnh Background
-              </button>
-            ) : (
-              <button className={styles.addToCartBtn} onClick={handleAddToCart}>
-                <FaShoppingCart className={styles.btnIcon} />
-                Thêm Vào Giỏ Hàng - {formatPrice(totalPrice)}
-              </button>
             )}
           </div>
 
-          {/* Validation Modal */}
-          {showValidationModal && (
-            <div className={styles.validationModal}>
-              <div
-                className={styles.modalOverlay}
-                onClick={() => setShowValidationModal(false)}
-              />
-              <div className={styles.modalContent}>
-                <div className={styles.modalHeader}>
-                  <h3>Vui lòng hoàn thiện thông tin</h3>
-                  <button
-                    className={styles.modalCloseBtn}
-                    onClick={() => setShowValidationModal(false)}
-                  >
-                    <FaTimes />
-                  </button>
-                </div>
-                <div className={styles.modalBody}>
-                  <div className={styles.errorList}>
-                    {validationErrors.map((error, index) => (
-                      <div key={index} className={styles.errorItem}>
-                        <FaTimes className={styles.errorIcon} />
-                        <span>{error}</span>
+          {/* Purchase Options */}
+          {optionData.length > 0 && (
+            <div className={styles.optionsCard}>
+              <h3>Tùy chọn mua thêm</h3>
+              <div className={styles.optionsList}>
+                {optionData.map((opt, i) => {
+                  const optId = `opt-${i}`;
+                  const isSelected = selectedOptions.some((o) => o.id === optId);
+                  return (
+                    <label key={i} className={`${styles.optionItem} ${isSelected ? styles.selected : ""}`}>
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleOptionToggle(optId, opt.price)}
+                      />
+                      <div className={styles.optionContent}>
+                        <span className={styles.optionName}>{opt.name}</span>
+                        {opt.description && <span className={styles.optionDesc}>{opt.description}</span>}
                       </div>
-                    ))}
-                  </div>
-                </div>
-                <div className={styles.modalFooter}>
-                  <button
-                    className={styles.modalBtn}
-                    onClick={() => setShowValidationModal(false)}
-                  >
-                    Đã hiểu
-                  </button>
-                </div>
+                      {opt.price > 0 && (
+                        <span className={styles.optionPrice}>+{formatPrice(opt.price)}</span>
+                      )}
+                    </label>
+                  );
+                })}
               </div>
             </div>
           )}
+
+          {/* Quantity Config */}
+          {config?.items && config.items.length > 0 && (
+            <div className={styles.quantityCard}>
+              <h3>Số lượng</h3>
+              {config.items.map((item) => {
+                const qty = customQuantities[item.id] || item.baseQuantity;
+                const price = calculateItemPrice(qty, item.priceRules);
+                return (
+                  <div key={item.id} className={styles.quantityRow}>
+                    <div className={styles.qtyInfo}>
+                      <span className={styles.qtyName}>{item.name}</span>
+                      {price > 0 && <span className={styles.qtyPrice}>+{formatPrice(price)}</span>}
+                    </div>
+                    {config.allowCustomQuantity ? (
+                      <QuantityControl
+                        value={qty}
+                        onChange={(v) => setCustomQuantities((prev) => ({ ...prev, [item.id]: v }))}
+                        min={config.minCustomQuantity}
+                        max={config.maxCustomQuantity}
+                      />
+                    ) : (
+                      <span className={styles.fixedQty}>{item.baseQuantity}</span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+
+        {/* Right: Product Selection */}
+        <section className={styles.rightSection}>
+          <div className={styles.selectionCard}>
+            <div className={styles.selectionHeader}>
+              <h2>Chọn sản phẩm tùy chỉnh</h2>
+              <p>Chọn các sản phẩm bạn muốn thêm vào đơn hàng</p>
+            </div>
+
+            {loadingProducts ? (
+              <div className={styles.loadingProducts}>
+                <div className={styles.loader}></div>
+                <p>Đang tải sản phẩm...</p>
+              </div>
+            ) : categoryIds.length === 0 ? (
+              <div className={styles.emptyProducts}>
+                <FaGift />
+                <p>Chưa có sản phẩm tùy chỉnh</p>
+              </div>
+            ) : (
+              <>
+                {/* Category Tabs */}
+                <div className={styles.categoryTabs}>
+                  {categoryIds.map((catId) => {
+                    const rule = config?.variantCategoryRules?.find((r) => r.categoryId === catId);
+                    const isRequired = rule?.isRequired || false;
+                    
+                    return (
+                      <button
+                        key={catId}
+                        className={`${styles.categoryTab} ${activeCategory === catId ? styles.active : ""} ${isRequired ? styles.required : ""}`}
+                        onClick={() => setActiveCategory(catId)}
+                      >
+                        <span className={styles.tabName}>
+                          {categoryNames[catId]}
+                          {isRequired && <span className={styles.requiredMark}>*</span>}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Search */}
+                <div className={styles.searchBox}>
+                  <FaSearch />
+                  <input
+                    type="text"
+                    placeholder={`Tìm trong ${categoryNames[activeCategory]}...`}
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                {/* Products Grid */}
+                <div className={styles.productsGrid}>
+                  {filteredProducts.length > 0 ? (
+                    filteredProducts.map((product) => {
+                      const rule = config?.variantCategoryRules?.find((r) => r.categoryId === activeCategory);
+                      const maxSel = rule?.maxSelections || 999;
+                      const currentSel = selectedProducts[activeCategory]?.length || 0;
+                      const isSelected = selectedProducts[activeCategory]?.some((p) => p.productCustomId === product.id);
+                      const disabled = !isSelected && currentSel >= maxSel;
+                      
+                      return (
+                        <ProductCard
+                          key={product.id}
+                          product={product}
+                          isSelected={!!isSelected}
+                          onSelect={() => handleProductSelect(activeCategory, product.id)}
+                          disabled={disabled}
+                        />
+                      );
+                    })
+                  ) : (
+                    <div className={styles.noResults}>
+                      <p>Không tìm thấy sản phẩm "{searchTerm}"</p>
+                    </div>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </section>
+      </main>
+
+      {/* Floating Price Bar */}
+      <footer className={styles.priceBar}>
+        <div className={styles.priceBarInner}>
+          <div className={styles.priceBreakdown}>
+            <div className={styles.priceItem}>
+              <span>Giá gốc:</span>
+              <span>{formatPrice(Number(selectedVariant.price))}</span>
+            </div>
+            {optionsPrice > 0 && (
+              <div className={styles.priceItem}>
+                <span>Tùy chọn:</span>
+                <span>+{formatPrice(optionsPrice)}</span>
+              </div>
+            )}
+            {customizationPrice > 0 && (
+              <div className={styles.priceItem}>
+                <span>Tùy chỉnh:</span>
+                <span>+{formatPrice(customizationPrice)}</span>
+              </div>
+            )}
+          </div>
+          
+          <div className={styles.totalSection}>
+            <div className={styles.totalPrice}>
+              <span>Tổng:</span>
+              <strong>{formatPrice(totalPrice)}</strong>
+            </div>
+            
+            <button
+              className={styles.continueBtn}
+              onClick={handleContinue}
+              disabled={backgroundLoading}
+            >
+              {backgroundLoading ? (
+                "Đang kiểm tra..."
+              ) : hasBackground ? (
+                <><FaPalette /> Tiếp tục chọn Background</>
+              ) : (
+                <><FaShoppingCart /> Thêm vào giỏ hàng</>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </footer>
+
+      {/* Validation Modal */}
+      {showValidation && (
+        <div className={styles.modal}>
+          <div className={styles.modalOverlay} onClick={() => setShowValidation(false)} />
+          <div className={styles.modalContent}>
+            <h3>Vui lòng hoàn thành các lựa chọn</h3>
+            <ul className={styles.errorList}>
+              {validationErrors.map((err, i) => (
+                <li key={i}><FaTimes /> {err}</li>
+              ))}
+            </ul>
+            <button className={styles.modalBtn} onClick={() => setShowValidation(false)}>
+              Đã hiểu
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
