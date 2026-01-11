@@ -1,37 +1,114 @@
 .heroRoot {
-    padding: 56px 0;
-    background: linear-gradient(180deg, #fff7f6 0%, #fff 100%);
+    padding: 80px 0;
+    background: linear-gradient(135deg, #fff7f6 0%, #fff 50%, #fef5f5 100%);
     text-align: center;
+    position: relative;
+    overflow: hidden;
 
     @media (max-width: 768px) {
-        padding: 40px 0;
+        padding: 60px 0;
     }
 
     @media (max-width: 480px) {
-        padding: 32px 0;
+        padding: 48px 0;
     }
+}
+
+.content {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #7a2323 0%, #a02c2c 100%);
+    color: #fff;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 15px rgba(122, 35, 35, 0.3);
+    animation: pulse-badge 2s ease-in-out infinite;
+
+    @media (max-width: 768px) {
+        padding: 6px 16px;
+        font-size: 13px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+        padding: 5px 14px;
+        font-size: 12px;
+        margin-bottom: 16px;
+    }
+}
+
+.badgeIcon {
+    font-size: 16px;
+    animation: sparkle 1.5s ease-in-out infinite;
+
+    @media (max-width: 480px) {
+        font-size: 14px;
+    }
+}
+
+.badgeText {
+    letter-spacing: 0.5px;
 }
 
 .title {
     font-family: 'UTM-Avo', Arial, sans-serif;
-    font-size: 36px;
+    font-size: 48px;
+    font-weight: 700;
     color: #7a2323;
-    margin-bottom: 8px;
+    margin-bottom: 16px;
+    line-height: 1.2;
+    background: linear-gradient(135deg, #7a2323 0%, #a02c2c 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 
     @media (max-width: 768px) {
-        font-size: 28px;
-        margin-bottom: 6px;
+        font-size: 36px;
+        margin-bottom: 12px;
     }
 
     @media (max-width: 480px) {
-        font-size: 24px;
-        margin-bottom: 4px;
+        font-size: 28px;
+        margin-bottom: 10px;
     }
 }
 
 .subtitle {
     color: #5a3636;
+    font-size: 20px;
+    font-weight: 500;
+    margin-bottom: 24px;
+    line-height: 1.6;
+
+    @media (max-width: 768px) {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 16px;
+        margin-bottom: 16px;
+        padding: 0 16px;
+    }
+}
+
+.description {
+    color: #6b4a4a;
     font-size: 16px;
+    line-height: 1.8;
+    max-width: 600px;
+    margin: 0 auto;
 
     @media (max-width: 768px) {
         font-size: 15px;
@@ -39,6 +116,132 @@
 
     @media (max-width: 480px) {
         font-size: 14px;
-        padding: 0 12px;
+        padding: 0 20px;
+    }
+
+    p {
+        margin: 0;
+    }
+}
+
+.decorative {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.circle1,
+.circle2,
+.circle3 {
+    position: absolute;
+    border-radius: 50%;
+    opacity: 0.1;
+    animation: float 6s ease-in-out infinite;
+}
+
+.circle1 {
+    width: 300px;
+    height: 300px;
+    background: linear-gradient(135deg, #7a2323 0%, #a02c2c 100%);
+    top: -100px;
+    right: -100px;
+    animation-delay: 0s;
+
+    @media (max-width: 768px) {
+        width: 200px;
+        height: 200px;
+        top: -50px;
+        right: -50px;
+    }
+
+    @media (max-width: 480px) {
+        width: 150px;
+        height: 150px;
+        top: -30px;
+        right: -30px;
+    }
+}
+
+.circle2 {
+    width: 200px;
+    height: 200px;
+    background: linear-gradient(135deg, #a02c2c 0%, #c93838 100%);
+    bottom: -50px;
+    left: -50px;
+    animation-delay: 2s;
+
+    @media (max-width: 768px) {
+        width: 150px;
+        height: 150px;
+        bottom: -30px;
+        left: -30px;
+    }
+
+    @media (max-width: 480px) {
+        width: 120px;
+        height: 120px;
+        bottom: -20px;
+        left: -20px;
+    }
+}
+
+.circle3 {
+    width: 150px;
+    height: 150px;
+    background: linear-gradient(135deg, #c93838 0%, #e05050 100%);
+    top: 50%;
+    left: 10%;
+    animation-delay: 4s;
+
+    @media (max-width: 768px) {
+        width: 100px;
+        height: 100px;
+        left: 5%;
+    }
+
+    @media (max-width: 480px) {
+        width: 80px;
+        height: 80px;
+        left: 3%;
+    }
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0) scale(1);
+    }
+
+    50% {
+        transform: translateY(-20px) scale(1.05);
+    }
+}
+
+@keyframes pulse-badge {
+
+    0%,
+    100% {
+        box-shadow: 0 4px 15px rgba(122, 35, 35, 0.3);
+    }
+
+    50% {
+        box-shadow: 0 4px 25px rgba(122, 35, 35, 0.5);
+    }
+}
+
+@keyframes sparkle {
+
+    0%,
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+
+    50% {
+        transform: scale(1.2) rotate(180deg);
     }
 }

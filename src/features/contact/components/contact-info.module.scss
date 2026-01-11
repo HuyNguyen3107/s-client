@@ -1,64 +1,176 @@
 .infoRoot {
-    padding: 28px 0 64px;
+    padding: 48px 0 64px;
+    background: #fff;
 
     @media (max-width: 768px) {
-        padding: 20px 0 48px;
+        padding: 36px 0 48px;
     }
 
     @media (max-width: 480px) {
-        padding: 16px 0 32px;
+        padding: 28px 0 40px;
+    }
+}
+
+.header {
+    text-align: center;
+    margin-bottom: 40px;
+
+    @media (max-width: 768px) {
+        margin-bottom: 32px;
+    }
+
+    @media (max-width: 480px) {
+        margin-bottom: 24px;
+    }
+}
+
+.title {
+    font-family: 'UTM-Avo', Arial, sans-serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: #7a2323;
+    margin-bottom: 12px;
+
+    @media (max-width: 768px) {
+        font-size: 28px;
+        margin-bottom: 10px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 24px;
+        margin-bottom: 8px;
+    }
+}
+
+.subtitle {
+    color: #6b4a4a;
+    font-size: 16px;
+    font-weight: 500;
+
+    @media (max-width: 768px) {
+        font-size: 15px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 14px;
     }
 }
 
 .grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 24px;
 
     @media (max-width: 768px) {
         grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+        gap: 18px;
     }
 
     @media (max-width: 480px) {
         grid-template-columns: 1fr;
-        gap: 10px;
+        gap: 14px;
     }
 }
 
 .item {
     display: flex;
-    gap: 12px;
-    align-items: center;
-    background: #fff;
-    padding: 14px 16px;
-    border-radius: 10px;
+    gap: 16px;
+    align-items: flex-start;
+    background: linear-gradient(135deg, #fff 0%, #fafafa 100%);
+    padding: 20px;
+    border-radius: 16px;
     border: 1px solid #f0eaea;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+        background: var(--item-color, #7a2323);
+        opacity: 0;
+        transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(122, 35, 35, 0.12);
+        border-color: rgba(122, 35, 35, 0.2);
+
+        &::before {
+            opacity: 1;
+        }
+
+        .icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+    }
 
     @media (max-width: 768px) {
-        padding: 12px 14px;
-        border-radius: 8px;
+        padding: 16px;
+        border-radius: 12px;
+        gap: 14px;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
     }
 
     @media (max-width: 480px) {
-        padding: 10px 12px;
-        gap: 10px;
+        padding: 14px;
+        border-radius: 10px;
+        gap: 12px;
     }
 }
 
 .icon {
-    font-size: 20px;
-    color: #7a2323;
+    font-size: 24px;
+    color: var(--item-color, #7a2323);
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(122, 35, 35, 0.08) 0%, rgba(160, 44, 44, 0.08) 100%);
+    border-radius: 12px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    @media (max-width: 768px) {
+        font-size: 22px;
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+    }
 
     @media (max-width: 480px) {
-        font-size: 18px;
+        font-size: 20px;
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
     }
+}
+
+.content {
+    flex: 1;
+    min-width: 0;
 }
 
 .label {
     font-weight: 700;
     color: #4a2b2b;
     font-size: 14px;
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+
+    @media (max-width: 768px) {
+        font-size: 13px;
+    }
 
     @media (max-width: 480px) {
         font-size: 12px;
@@ -67,9 +179,37 @@
 
 .value {
     color: #5a3a3a;
-    font-size: 14px;
+    font-size: 15px;
+    line-height: 1.5;
+    word-break: break-word;
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
 
     @media (max-width: 480px) {
-        font-size: 12px;
+        font-size: 13px;
+    }
+}
+
+.valueLink {
+    color: #5a3a3a;
+    font-size: 15px;
+    line-height: 1.5;
+    word-break: break-word;
+    text-decoration: none;
+    transition: color 0.2s ease;
+
+    &:hover {
+        color: #7a2323;
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        font-size: 14px;
+    }
+
+    @media (max-width: 480px) {
+        font-size: 13px;
     }
 }
